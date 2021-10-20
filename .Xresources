@@ -1,0 +1,54 @@
+Xcursor.theme: Adwaita
+Xcursor.size: 6
+
+! special
+*.foreground:   #f0f0f0
+*.background:   #24232b
+*.cursorColor:  #f0f0f0
+
+! black
+*.color0:       #63759e
+*.color8:       #6b7b88
+
+! red
+*.color1:       #be5e67
+*.color9:       #c55761
+
+! green
+*.color2:       #bdccb2
+*.color10:      #8a9e7b
+
+! yellow
+*.color3:       #e1c283
+*.color11:      #f7d38b
+
+! blue
+*.color4:       #9abada
+*.color12:      #a4cef6
+
+! magenta
+*.color5:       #dca5d2
+*.color13:      #e892d8
+
+! cyan
+*.color6:       #97c9c7
+*.color14:      #85cfcd
+
+! white
+*.color7:       #c9d2e4
+*.color15:      #c6d6f7
+
+
+!! Common Keybinds for Navigations
+URxvt.keysym.Shift-Up:             command:\033]720;1\007
+URxvt.keysym.Shift-Down:           command:\033]721;1\007
+URxvt.keysym.Control-Up:           \033[1;5A
+URxvt.keysym.Control-Down:         \033[1;5B
+URxvt.keysym.Control-Right:        \033[1;5C
+URxvt.keysym.Control-Left:         \033[1;5D
+
+URxvt.scrollBar:                   false
+URxvt.font:                        xft:terminus:size=11:antilias=true
+URxvt*depth:                       32
+Urxvt*background:                  rgba:0000/0000/0200/c800
+URxvt*saveLines:                   10000

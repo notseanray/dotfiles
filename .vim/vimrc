@@ -1,0 +1,88 @@
+" Setting up
+if has("filetype")
+    filetype indent plugin on
+endif
+if has("syntax")
+    syntax on
+endif
+if has("mouse")
+    set mouse=a
+endif
+
+"" Graphics
+set t_Co=256
+set cursorline
+set nu
+set termguicolors
+set lazyredraw
+colorscheme eight
+
+"" Functionality
+set confirm
+set foldmethod=indent
+set foldlevelstart=10
+set splitbelow splitright
+set foldenable
+set showmatch
+set smartcase
+set ignorecase
+set hlsearch
+set wildmenu
+set hidden
+set incsearch
+set smartindent
+set softtabstop=4
+set tabstop=4 
+set expandtab
+set shiftwidth=4 
+set noerrorbells
+set virtualedit=all
+set nocompatible
+
+"" Disable (still aint workin)
+set ruler!
+
+"" Check for files
+" TODO; put .vim here
+"
+" if empty(glob('~/.vim'))
+"   silent !git clone https://GITLINKHERE ~/.vim
+" endif  
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -flo ~/.vim/autoload/plug.vim --create-dirs 
+        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+"" Plugged
+call plug#begin('~/.vim/plugged')
+    Plug 'ap/vim-css-color'
+    Plug 'tpope/vim-fugitive'
+    Plug 'jiangmiao/auto-pairs'
+    Plug 'sheerun/vim-polyglot'
+call plug#end()
+
+"" Keymap
+" Vanity
+" nnoremap / :syntax off<CR> :hi Normal ctermfg=0<CR> :hi IncSearch ctermfg=1<CR> /
+                    
+" nnoremap v :hi ModeMsg ctermfg=1<CR> v
+" nnoremap i :hi ModeMsg ctermfg=114<CR> i
+
+nnoremap <silent> <C-t> :tabnew<CR>
+nnoremap <C-o> :e 
+nnoremap <silent> TT :tabn<CR>
+nnoremap <silent> tt :tabp<CR>
+nnoremap <space> za
+nnoremap <silent> <C-l> :so $MYVIMRC<CR> :nohl<CR><C-l>
+
+
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+"call plug#begin(stdpath('data' . '/plugged'))
+
+"Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
+
+" Initialize plugin system
+"call plug#end()

@@ -1,0 +1,12 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhistcnt =1
+let g:netrw_dirhist_1='supervise.udevd'
+let g:netrw_dirhist_0='/home/sean/Desktop/stuff/scrcpy/build-auto/meson-logs'
+let g:netrw_dirhist_9='/home/sean/Desktop/stuff/rusttest/src'
+let g:netrw_dirhist_8='/home/sean/Desktop/stuff/ChemTool'
+let g:netrw_dirhist_7='/home/sean/Desktop/chemtest.py'
+let g:netrw_dirhist_6='/home/sean/.config/slstatus'
+let g:netrw_dirhist_5='/home/sean/.config/dwm'
+let g:netrw_dirhist_4='/home/sean/.config'
+let g:netrw_dirhist_3='/home/sean/Desktop/dotfiles/COL/eight/vim/.vim'
+let g:netrw_dirhist_2='/home/sean/.vim'
