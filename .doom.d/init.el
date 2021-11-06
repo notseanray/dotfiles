@@ -185,3 +185,6 @@
        :config
        ;;literate
        (default +bindings +smartparens))
+
+(require 'elcord)
+(elcord-mode)

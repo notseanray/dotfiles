@@ -23,6 +23,8 @@ xset r rate 300 30
 
 export TERM=xterm
 
+/home/sean/.config/sbar &
+
 #pulseaudio &
 
 # test for an existing bus daemon, just to be safe

@@ -1,0 +1,64 @@
+#!/bin/env sh
+
+# INIT
+printf "$$" > ~/.cache/pidofbar
+sec=0
+
+# MODULES
+update_cpu () { 
+	# sketchy way to calculate actual percent usage 
+  cpu_idle=`top -b -n 1 | grep Cpu | awk '{print $8}'|cut -f 1 -d "."`
+  cpu=`expr 100 - $cpu_idle`
+}
+
+update_memory () { 
+	memory="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+}
+
+update_time () { 
+	time="$(date "+[%a %d %b] [%I:%M %P]")" 
+}
+
+update_weather () { 
+	weather="$(curl -s "wttr.in?format=1"| sed -E "s/^(.).*\+/\1/")" 
+}
+
+update_vol () { 
+	vol="$([ "$(pamixer --get-mute)" = "false" ] && printf '' || printf '')$(pamixer --get-volume)%"
+}
+# set initial value 
+update_vol
+
+display () { 
+  #printf "%s\n" " $event [$weather] [$memory $cpu] [$bat] [$backlight] [$vol] $time "
+	xsetroot -name "$weather [CPU $cpu%] [RAM $memory] [Vol $vol] $time"
+}
+
+# SIGNALLING
+# trap	"<function>;display"		"RTMIN+n"
+trap	"update_vol;display"		"RTMIN"
+trap	"update_backlight;display" 	"RTMIN+1"
+trap	"update_bat;display" 		"RTMIN+2"
+# to update it from external commands
+## kill -m "$(cat ~/.cache/pidofbar)"
+# where m = 34 + n
+
+while true
+do
+	sleep 1 & wait && { 
+		# to update item ever n seconds with a offset of m
+		## [ $((sec % n)) -eq m ] && udpate_item
+		[ $((sec % 5 )) -eq 0 ] && update_time 	# update time every 5 seconds
+		[ $((sec % 5)) -eq 0 ] && update_cpu 	# update cpu every 15 seconds
+		[ $((sec % 5)) -eq 0 ] && update_memory
+		[ $((sec % 1800)) -eq 2 ] && update_weather 
+		#[ $((sec % 300)) -eq 1 ] && update_event
+
+		# how often the display updates ( 5 seconds )
+		[ $((sec % 5 )) -eq 0 ] && display
+		sec=$((sec + 1))
+	}
+done 
+
+
+
