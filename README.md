@@ -20,4 +20,5 @@ This set of dotfiles is for some general config for my crap such as
 
 ### Rice preview
 ![ricepng](https://i.imgur.com/jDfRAUR.png)
+![ricepng](https://i.imgur.com/GL8Dx3F.png)
 [Reddit post](https://www.reddit.com/r/unixporn/comments/q9iezf/dwm_simple_first_rice_using_void/)
