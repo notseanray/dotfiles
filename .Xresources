@@ -3,11 +3,10 @@ Xcursor.size: 4
 
 ! special
 *.foreground:   #f0f0f0
-*.background:   #24232b
 *.cursorColor:  #f0f0f0
 
 ! black
-*.color0:       #63759e
+*.color0:       #1e222a
 *.color8:       #6b7b88
 
 ! red
@@ -46,9 +45,10 @@ URxvt.keysym.Control-Up:           \033[1;5A
 URxvt.keysym.Control-Down:         \033[1;5B
 URxvt.keysym.Control-Right:        \033[1;5C
 URxvt.keysym.Control-Left:         \033[1;5D
+URxvt.color0:                      #63759e
+URxvt.background:                  #1e222a
 
 URxvt.scrollBar:                   false
-URxvt.font:                        xft:terminus:size=11:antilias=true
+URxvt.font:                        xft:Terminus:size=11:antilias=true
 URxvt*depth:                       32
-Urxvt*background:                  rgba:0000/0000/0200/c800
 URxvt*saveLines:                   10000
