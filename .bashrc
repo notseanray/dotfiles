@@ -9,19 +9,24 @@ alias rm='rm -v -I'
 alias xi='doas xbps-install'
 alias xr='doas xbps-remove'
 alias xq='xbps-query'
+alias xss='ll /home/sean/Desktop/stuff/void-packages/srcpkgs/ | rg'
+alias xsi='/home/sean/Desktop/stuff/void-packages/./xbps-src -E pkg'
 alias ll='exa --long --header'
 alias grep='rg'
 alias ss="scrot -s ~/Desktop/temp.png"
 alias lvim="/home/sean/.local/bin/lvim"
 alias nvim="lvim"
+alias sd="nsxiv"
 
-export TERM="xterm"
-export TERMINAL="urxvt"
+export TERM="st"
+export TERMINAL="st"
+export terminal="st"
 export EDITOR="lvim" 
-export BROWSER="firefox"
+export BROWSER="brave"
 export COLORTERM="truecolor"
 
 export CLR_OPENSSL_VERSION_OVERRIDE=46
+export _JAVA_AWT_WM_NONREPARENTING=1
 
 xdg-mime default brave-browser.desktop x-scheme-handler/https x-scheme-handler/http
 

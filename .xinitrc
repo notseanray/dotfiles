@@ -12,9 +12,9 @@ xrandr --output DP-1 --mode 1920x1080 --right-of DP-2 --rate 60.00
 
 xrdb /home/sean/.Xresources &
 
-xwallpaper --no-randr --focus /home/sean/.config/wallpapers/composite4.jpg &
+xwallpaper --no-randr --focus /home/sean/.config/wallpapers/5 &
 
-pulseaudio &
+pulseaudio --daemonize=no --exit-idle-time=-1 &
 /home/sean/.config/sbar &
 
 exec dwm
