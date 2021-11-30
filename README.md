@@ -1,23 +1,15 @@
 ## Void dotfiles
 Please note all of this is quite messy, I'll organize it some day 
-This set of dotfiles is for some general config for my crap such as
-* vim 
-* bpytop
-* lvim/nvim
-* wallpapers
-* xinit
-* xdefaults
-* xresources
-* bashrc
-* neofetch 
-* ranger
-* and my brave/chrome theme :)
+
+It has the config files for various programs I use
 
 ### Scripts for
 * setres (setting resolution)
 * sbar (status bar for dwm in bash with xsetroot)
 * setwallpaper
 * setvol (set volume)
+* setspeaker (switch the audio output through dmenu)
+* setdate (change the date real quick if needed)
 
 Most of these scripts I copied to somewhere in my path (hence why they use absolute paths) so I can run them with [dmenu](https://github.com/NotCreative21/dmenu)
 

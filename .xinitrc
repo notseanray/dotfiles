@@ -15,7 +15,9 @@ xrdb /home/sean/.Xresources &
 xwallpaper --no-randr --focus /home/sean/.config/wallpapers/5 &
 
 pulseaudio --daemonize=no --exit-idle-time=-1 &
-/home/sean/.config/sbar &
+/home/sean/.config/scripts/sbar &
+
+source /home/sean/.bashrc
 
 exec dwm
 # exec gnome-session
