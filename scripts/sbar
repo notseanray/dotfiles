@@ -1,0 +1,56 @@
+#!/bin/env sh
+
+# INIT
+printf "$$" > ~/.cache/pidofbar
+
+# MODULES
+update_cpu () { 
+	# sketchy way to calculate actual percent usage 
+	cpu_idle=`top -b -n 1 | grep Cpu | awk '{print $8}'|cut -f 1 -d "."`
+	cpureal=`expr 100 - $cpu_idle`
+	if [ $(echo $cpureal) -lt 1 ]
+		then
+			cpu=0
+		else
+			cpu=$cpureal
+	fi
+}
+
+update_memory () { 
+	memory="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+}
+
+update_time () { 
+	time="$(date "+%a %b %d %H:%M")" 
+}
+
+update_weather () { 
+	#weather="$(curl -s "wttr.in?format=1"| sed -E "s/^(.).*\+/\1/")" 
+  weather="$(curl -s "wttr.in?format="%t"")"
+}
+
+#update_vol () { 
+#	#vol="$([ "$(pamixer --get-mute)" = "false" ] && printf '' || printf '')$(pamixer --get-volume)%"
+#  vol="$(pactl list sinks | grep '^[[:space:]]Volume:' | \
+#    head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,')"
+#}
+# set initial value 
+#pulseaudio --daemonize=no --exit-idle-time=-1 &
+#update_vol
+
+display () { 
+  #printf "%s\n" " $event [$weather] [$memory $cpu] [$bat] [$backlight] [$vol] $time "
+	xsetroot -name "$weather CPU: $cpu% $memory $time"
+}
+while true
+do
+	sleep 5 & wait && { 
+		# to update item ever n seconds with a offset of m
+		update_time
+		update_cpu
+		update_memory
+		#update_vol
+		update_weather
+		display
+	}
+done 

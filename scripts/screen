@@ -1,0 +1,2 @@
+screen=$(scrot -se 'xclip -selection clipboard -t image/png -i $f')
+eval $screen &
