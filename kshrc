@@ -14,21 +14,15 @@ if [[ $- != *i* ]] ; then
 	return
 fi
 
-export TERM='xterm-256color'
 xset r rate 300 30
 alias sudo='doas'
-export TERM="st"
-export TERMINAL="st"
-export terminal="st"
-export COLORTERM="truecolor"
 alias rm='rm -v -I'
 alias ll='exa --long --header'
 alias grep='rg'
 alias find='fd'
-export _JAVA_AWT_WM_NONREPARENTING=1
 alias ls='ls --color=auto'
 alias sd="nsxiv"
-export PATH=${PATH}:/home/sean/.config/scripts
+alias v="nvim"
 
-PS1="\\[\033[36m\]\u@\h \\[\033[90m\]\w \\[\033[37m\]$ "
-. "$HOME/.cargo/env"
+#PS1="\\[\033[36m\]\u:\\[\033[90m\]\w \\[\033[37m\]$ "
+. "$HOME/.config/.cargo/env"

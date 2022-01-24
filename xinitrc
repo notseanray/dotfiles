@@ -10,11 +10,13 @@ xrandr --output DP-2 --mode 1920x1080 --rate 144.00 --primary
 xrandr --output HDMI-0 --mode 1920x1080 --rate 60.00 --rotate left --left-of DP-2 --rate 60.00
 xrandr --output DP-1 --mode 1920x1080 --right-of DP-2 --rate 60.00
 
-xrdb /home/sean/.Xresources &
-source /home/sean/.bashrc
+xrdb /home/sean/.config/Xresources &
+xrdb -merge /home/sean/.config/Xdefaults &
+. "$HOME/.config/bashrc"
 /home/sean/.config/scripts/sbar &
 unset XDG_RUNTIME_DIR
 export XDG_RUNTIME_DIR=$(mktemp -d /tmp/$(id -u)-runtime-dir.XXX)
-/usr/bin/pipewire &
+killall pulseaudio
+pulseaudio --daemonize=no --exit-idle-time=-1 &
 setwall $(cat /home/sean/.config/scripts/curwall)
 exec dwm

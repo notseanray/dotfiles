@@ -1,16 +1,6 @@
 #!/bin/bash
-interfaces=$(pw-cli ls Node | grep node.name)
-options=()
+chosen=$(pacmd list-sinks | grep 'index: ' | dmenu -g 1)
 IFS=' '
-for e in $interfaces
-do
-	if [ ${#e} -gt 20 ]
-	then
-		options+="$e"
-	fi
-done
-chosen=$(echo $options | dmenu -g 1)
-read -e strarr <<< "$chosen"
-test=$(echo $strarr | cut -c 1-)
-final="pw-metadata 0 default.configured.audio.sink '{ \"name\": ${test::-1}\"}'"
-eval $final
+read -a strarr <<< "$chosen"
+
+pacmd set-default-sink ${strarr[1]}
