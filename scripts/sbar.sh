@@ -1,7 +1,9 @@
 #!/bin/env sh
 
 # INIT
-printf "$$" > ~/.cache/pidofbar
+touch /tmp/sbar
+kill -9 $(cat /tmp/sbar)
+echo "$$" > /tmp/sbar
 
 # MODULES
 update_cpu () { 
@@ -11,7 +13,7 @@ update_cpu () {
 }
 
 update_memory () { 
-	memory="$(free -h | sed -n "2s/\([^ ]* *\)\{2\}\([^ ]*\).*/\2/p")"
+	mem="$(free | head -n 2 | tail -n 1 | awk '{printf "%.0fM/%2.2f%%\n", $3/1000, $3/$2*100}')"
 }
 
 update_time () { 
@@ -19,8 +21,8 @@ update_time () {
 }
 
 update_weather () { 
-	#weather="$(curl -s "wttr.in?format=1"| sed -E "s/^(.).*\+/\1/")" 
-	weather="$(curl -s "wttr.in?format="%t"")"
+	weather="$(curl -s "wttr.in?format=1"| sed -E "s/^(.).*\+/\1/")" 
+	#weather="$(curl -s "wttr.in?format="%t"")"
 }
 
 update_vol () { 
@@ -28,22 +30,25 @@ update_vol () {
 	vol="$(pactl list sinks | grep '^[[:space:]]Volume:' | \
 	head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,')"
 }
+
+btc () {
+  btc="$(curl -s http://api.coindesk.com/v1/bpi/currentprice.json | jq -r .bpi.USD.rate)"
+}
 # set initial value 
-#pulseaudio --daemonize=no --exit-idle-time=-1 &
-#update_vol
+update_vol
 
 display () { 
   #printf "%s\n" " $event [$weather] [$memory $cpu] [$bat] [$backlight] [$vol] $time "
-	xsetroot -name "$weather CPU: $cpu% $memory $time"
+	xsetroot -name "₿ $btc | $weather | ⌨ $cpu% | ⚠ $mem | ^ $vol% | $time"
 }
 while true
 do
 	sleep 5 & wait && { 
-		# to update item ever n seconds with a offset of m
+		btc
 		update_time
 		update_cpu
 		update_memory
-		#update_vol
+		update_vol
 		update_weather
 		display
 	}

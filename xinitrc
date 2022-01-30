@@ -13,10 +13,11 @@ xrandr --output DP-1 --mode 1920x1080 --right-of DP-2 --rate 60.00
 xrdb /home/sean/.config/Xresources &
 xrdb -merge /home/sean/.config/Xdefaults &
 . "$HOME/.config/bashrc"
-/home/sean/.config/scripts/sbar &
 unset XDG_RUNTIME_DIR
 export XDG_RUNTIME_DIR=$(mktemp -d /tmp/$(id -u)-runtime-dir.XXX)
 killall pulseaudio
 pulseaudio --daemonize=no --exit-idle-time=-1 &
+/home/sean/.config/scripts/sbar.sh &
 setwall $(cat /home/sean/.config/scripts/curwall)
 exec dwm
+#exec swim

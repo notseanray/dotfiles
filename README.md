@@ -23,7 +23,7 @@ Most of these scripts I copied to somewhere in my path (hence why they use absol
 
 **wm:** [dwm](https://github.com/NotCreative21/dwm)
 
-**term:** [st](https://github.com/NotCreative21/st)
+**term:** [kitty](https://github.com/NotCreative21/dotfiles/blob/gentoo/config/kitty.conf)
 
 **distro:** [gentoo](https://www.gentoo.org/)
 
