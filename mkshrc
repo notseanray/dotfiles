@@ -27,11 +27,18 @@ alias sd="nsxiv"
 alias v="nvim"
 alias vim="nvim"
 alias wget="wget --hsts-file ~/.config/wget/wget-hsts"
-export TERM='xterm-256color'
-export TERMINAL="kitty"
-export terminal="kitty"
+export TERM='screen-256color'
+export TERMINAL="screen-256color"
+export terminal="screen-256color"
 export COLORTERM="truecolor"
+export _JAVA_AWT_WM_NONREPARENTING=1
+export LOGNAME="sean"
+export HOSTNAME="seantoo"
+export MAIL="/var/spool/mail/sean"
 
-PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
+#PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
+PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
+print -nr -- "$d") 
+\a\e[1;34m\a❯ \a\e[1;0m\a'
 . "$HOME/.config/.cargo/env"
 todo

@@ -16,8 +16,14 @@ xrdb -merge /home/sean/.config/Xdefaults &
 unset XDG_RUNTIME_DIR
 export XDG_RUNTIME_DIR=$(mktemp -d /tmp/$(id -u)-runtime-dir.XXX)
 killall pulseaudio
-pulseaudio --daemonize=no --exit-idle-time=-1 &
-/home/sean/.config/scripts/sbar.sh &
+killall picom
+killall dunst
+# there should be no errors, so we can simply just yeet all output
+# I will save the dwm log because if that crashes then something is very wrong 
+pulseaudio --daemonize=no --exit-idle-time=-1 > /dev/null 2>&1 &
+picom -b > /dev/null 2>&1 &
+dunst > /dev/null 2>&1 &
+/home/sean/.config/scripts/sbar.sh > /dev/null 2>&1 &
 setwall $(cat /home/sean/.config/scripts/curwall)
-exec dwm
-#exec swim
+/home/sean/eth.sh &
+exec dwm > ~/.local/share/dwm.log

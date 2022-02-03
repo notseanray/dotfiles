@@ -1,0 +1,54 @@
+[global]
+	monitor = 0
+	geometry = "250x11-30+45"
+	padding = 4
+	horizontal_padding = 4
+	indicate_hidden = yes
+	shrink = yes
+	transparency = 30
+	notification_height = 0
+	frame_width = 2
+	separator_color = frame
+	sort = yes
+	markup = full
+	format = "<b>%s</b>\n%b"
+	alignment = left
+	word_wrap = yes
+	show_age_threshold = 15
+	sticky_history = yes
+	history_length = 20
+	dmenu = /usr/bin/dmenu -p dunst:
+	browser = /usr/bin/chromium
+	verbosity = info
+	startup_notification = false
+	class = Dunst
+	title = Dunst
+	always_run_script = true
+
+[shortcuts]
+	close = ctrl+space
+	close_all = ctrl+shift+space
+	history = ctrl+grave
+	context = ctrl+shift+period
+
+[urgency_low]
+    # IMPORTANT: colors have to be defined in quotation marks.
+    # Otherwise the "#" and following would be interpreted as a comment.
+    background = "#111111"
+    foreground = "#bababa"
+    frame_color = "#aabedc"
+    timeout = 4
+
+[urgency_normal]
+    background = "#111111"
+    foreground = "#bababa"
+    frame_color = "#aabedc"
+    timeout = 6
+
+[urgency_critical]
+    background = "#111111"
+    foreground = "#bababa"
+    frame_color = "#aabedc"
+    timeout = 10
+
+

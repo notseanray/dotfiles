@@ -4,7 +4,7 @@ Xcursor.size: 6
 ! special
 *.foreground:   #f0f0f0
 *.background:   #282c34
-*.cursorColor:  #f0f0f0
+*.cursorColor:  #99cadb
 
 ! black
 *.color0:       #282c34
@@ -27,7 +27,7 @@ Xcursor.size: 6
 *.color12:      #81a2be
 
 ! magenta
-*.color5:       #85678f
+*.color5:       #BF92CE
 *.color13:      #b294bb
 
 ! cyan

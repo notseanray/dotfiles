@@ -1,10 +1,11 @@
 ### gentoo dotfiles
 Please note all of this is quite messy, I'll organize it some day 
 
-It has the config files for various programs I use
+It has the config files for various programs I use, and features dunst integration in many cases
 
 ### Scripts for
 * eth (set ethernet interface)
+* decrement/increment vol
 * setres (setting resolution)
 * sbar (status bar for dwm in bash with xsetroot)
 * setwall 

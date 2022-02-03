@@ -38,7 +38,7 @@ unset sh
 		# this *after* the user's .bash_profile runs (without putting 
 		# it in the user's dot-files), but it shouldn't make any 
 		# difference.
-		. /etc/bash/bashrc
+		# . /etc/bash/bashrc
 #	else
 		PS1="[\\033[90m\]\\w\\[\\033[37m\]] "
 #	fi
@@ -70,6 +70,6 @@ export XAUTHORITY="$HOME/.config/.Xauthority"
 alias wget="wget --hsts-file ~/.config/wget/wget-hsts"
 
 . "$HOME/.config/.cargo/env"
-. "$HOME/.config/bashrc"
+#. "$HOME/.config/bashrc"
 
 #if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
