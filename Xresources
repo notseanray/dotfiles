@@ -38,7 +38,6 @@ Xcursor.size: 6
 *.color7:       #707880
 *.color15:      #c5c8c6
 
-
 !! Common Keybinds for Navigations
 URxvt.keysym.Shift-Up:             command:\033]720;1\007
 URxvt.keysym.Shift-Down:           command:\033]721;1\007

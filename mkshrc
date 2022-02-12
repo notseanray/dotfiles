@@ -25,8 +25,10 @@ alias find='fd'
 alias ls='ls --color=auto'
 alias sd="nsxiv"
 alias v="nvim"
+alias c="cat"
 alias vim="nvim"
-alias wget="wget --hsts-file ~/.config/wget/wget-hsts"
+alias wwget="wget"
+alias wget="aria2c"
 export TERM='screen-256color'
 export TERMINAL="screen-256color"
 export terminal="screen-256color"
@@ -35,10 +37,18 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 export LOGNAME="sean"
 export HOSTNAME="seantoo"
 export MAIL="/var/spool/mail/sean"
+export GRADLE_USER_HOME="/home/sean/.config/gradle"
+export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
+export ANDROID_SDK_HOME="/home/sean/.config/android"
 
 #PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
 print -nr -- "$d") 
-\a\e[1;34m\a❯ \a\e[1;0m\a'
+\a\e[1;34m\aλ \a\e[1;0m\a'
+#PS1=$'\e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
+#print -nr -- "$d") \a\e[1;34m\aδ \a\e[1;0m\a'
+
 . "$HOME/.config/.cargo/env"
+export NVM_DIR="$HOME/.config//nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 todo
