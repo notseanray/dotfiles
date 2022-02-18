@@ -3,8 +3,7 @@ Xcursor.size: 6
 
 ! special
 *.foreground:   #f0f0f0
-*.background:   #282c34
-*.cursorColor:  #99cadb
+*.background:   #ffffff
 
 ! black
 *.color0:       #282c34

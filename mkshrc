@@ -40,6 +40,7 @@ export MAIL="/var/spool/mail/sean"
 export GRADLE_USER_HOME="/home/sean/.config/gradle"
 export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
 export ANDROID_SDK_HOME="/home/sean/.config/android"
+export DISTCC_DIR="/var/tmp/portage/.distcc"
 
 #PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
@@ -49,6 +50,6 @@ print -nr -- "$d")
 #print -nr -- "$d") \a\e[1;34m\aδ \a\e[1;0m\a'
 
 . "$HOME/.config/.cargo/env"
-export NVM_DIR="$HOME/.config//nvm"
+export NVM_DIR="$HOME/.config/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-todo
+#todo

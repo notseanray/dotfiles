@@ -1,16 +1,25 @@
 ### gentoo dotfiles
 Please note all of this is quite messy, I'll organize it some day 
 
-It has the config files for various programs I use, and features dunst integration in many cases
+#### details
+* distro: gentoo
+* app launcher: dmenu
+* wm: dwm
+* terminals: kitty, st
+* font: Terminus Nerd Complete
+* tui fm: ranger
+* shell: mksh
 
-userChrome.css is a firefox theme, it's incomplete
+#### more
 
-Default ram usage with kernel config: ~74mb with xserver & 16gb ram (menuconfig)
-
-**wm:** [dwm](https://github.com/NotCreative21/dwm)
-
-**term:** [kitty](https://github.com/NotCreative21/dotfiles/blob/gentoo/config/kitty.conf)
-
-**distro:** [gentoo](https://www.gentoo.org/)
+* custom kernel (menu config)
+* eudev replacing udev
+* custom grub menu
+* sx over xinit
+* ripgrep over grep
+* fd over find
+* uutils over GNU coreutils
+* exa over ls
+* doas over sudo
 
 ![ricepng](./ricey.png)

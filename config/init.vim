@@ -229,6 +229,8 @@ endif
 
 set relativenumber
 
+
+
 set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | |    |   |   |    | |  + viminfo file path
 "           | |    |   |   |    | + file marks 0-9,A-Z 0=NOT stored
@@ -238,7 +240,6 @@ set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | |    + files marks saved
 "           | + lines saved each register (old name for <, vi6.2)
 "           + save/restore buffer list
-
 
 if (empty($TMUX))
   if (has("nvim"))
@@ -255,6 +256,8 @@ endif
 
 set background=dark
 colorscheme one
+
+set viminfo+=n~/.config/viminfo
 
 set tabstop=4
 set shiftwidth=4
