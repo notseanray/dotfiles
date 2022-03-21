@@ -7,8 +7,13 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.config/nvim/plugged')
-
-"plugins here, coc for example
+Plug 'ObserverOfTime/coloresque.vim'
+Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
+Plug 'noib3/nvim-cokeline'
+" main one
+Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
+" 9000+ Snippets
+Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'jiangmiao/auto-pairs'
 Plug 'machakann/vim-sandwich'
@@ -25,8 +30,14 @@ Plug 'wakatime/vim-wakatime'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
+Plug 'liuchengxu/vista.vim'
 
 call plug#end()
+
+set termguicolors
+lua << EOF
+require('cokeline').setup()
+EOF
 
 function! WinMove(key)
     let t:curwin = winnr()
@@ -134,6 +145,18 @@ function! s:show_documentation()
   endif
 endfunction
 
+function! NearestMethodOrFunction() abort
+  return get(b:, 'vista_nearest_method_or_function', '')
+endfunction
+
+set statusline+=%{NearestMethodOrFunction()}
+
+" By default vista.vim never run if you don't call it explicitly.
+"
+" If you want to show the nearest function in your statusline automatically,
+" you can add the following line to your vimrc
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+
 " Highlight the symbol and its references when holding the cursor.
 " autocmd CursorHold * silent call CocActionAsync('highlight')
 
@@ -230,14 +253,15 @@ let g:NERDTreeDirArrows=1
 let NERDTreeShowHidden=1
 
 map <C-n> :NERDTreeToggle<CR>
+map <C-m> :Vista!!<CR>
 
 if has('clipboard')
 	vnoremap <C-c> "+y
 endif
 
-set relativenumber
-
-
+" turn hybrid line numbers on
+:set number relativenumber
+:set nu rnu
 
 set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | |    |   |   |    | |  + viminfo file path

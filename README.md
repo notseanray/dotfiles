@@ -20,6 +20,7 @@ Please note all of this is quite messy, I'll organize it some day
 * fd over find
 * uutils over GNU coreutils
 * exa over ls
+* bat over cat
 * doas over sudo
 
 ![ricepng](./ricey.png)
