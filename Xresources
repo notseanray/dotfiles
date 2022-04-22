@@ -3,7 +3,7 @@ Xcursor.size: 6
 
 ! special
 *.foreground:   #f0f0f0
-*.background:   #a89984 
+*.background:   #a89984
 ! ^ st cursor color
 
 ! black

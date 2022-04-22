@@ -7,12 +7,12 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.config/nvim/plugged')
-Plug 'ObserverOfTime/coloresque.vim'
 Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
+Plug 'glepnir/galaxyline.nvim'
+Plug 'Avimitin/nerd-galaxyline'
+Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'noib3/nvim-cokeline'
-" main one
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
-" 9000+ Snippets
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'jiangmiao/auto-pairs'
@@ -30,14 +30,39 @@ Plug 'wakatime/vim-wakatime'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'sakhnik/nvim-gdb', { 'do': ':!./install.sh' }
-Plug 'liuchengxu/vista.vim'
+Plug 'andweeb/presence.nvim'
 
 call plug#end()
 
 set termguicolors
 lua << EOF
-require('cokeline').setup()
+local get_hex = require('cokeline/utils').get_hex
+require('cokeline').setup({
+  components = {
+    {
+      text = function(buffer) return (buffer.index ~= 1) and '▏' or '' end,
+      fg = get_hex('Normal', 'fg')
+    },
+    {
+      text = function(buffer) return '    ' .. buffer.devicon.icon end,
+      fg = function(buffer) return buffer.devicon.color end,
+    },
+    {
+      text = function(buffer) return buffer.filename .. '    ' end,
+      style = function(buffer) return buffer.is_focused and 'bold' or nil end,
+    },
+    {
+      text = '',
+      delete_buffer_on_left_click = true,
+    },
+    {
+      text = '  ',
+    },
+  },
+})
 EOF
+
+let g:presence_enable_line_number = 1
 
 function! WinMove(key)
     let t:curwin = winnr()
@@ -145,18 +170,6 @@ function! s:show_documentation()
   endif
 endfunction
 
-function! NearestMethodOrFunction() abort
-  return get(b:, 'vista_nearest_method_or_function', '')
-endfunction
-
-set statusline+=%{NearestMethodOrFunction()}
-
-" By default vista.vim never run if you don't call it explicitly.
-"
-" If you want to show the nearest function in your statusline automatically,
-" you can add the following line to your vimrc
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
-
 " Highlight the symbol and its references when holding the cursor.
 " autocmd CursorHold * silent call CocActionAsync('highlight')
 
@@ -234,8 +247,6 @@ nnoremap <silent><nowait> <space>e  :<C-u>CocList extensions<cr>
 nnoremap <silent><nowait> <space>c  :<C-u>CocList commands<cr>
 " Find symbol of current document.
 nnoremap <silent><nowait> <space>o  :<C-u>CocList outline<cr>
-" Search workspace symbols.
-nnoremap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 " Do default action for next item.
 nnoremap <silent><nowait> <space>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
@@ -250,10 +261,10 @@ autocmd StdinReadPre * let s:std_in=1
 " autocmd VimEnter * NERDTree | if argc() > 0 || exists("s:std_in") | wincmd p | endif
 
 let g:NERDTreeDirArrows=1
+let g:NERDTreeIgnore = ['^node_modules$', '^__pycache__$', '^.git$']
 let NERDTreeShowHidden=1
 
-map <C-n> :NERDTreeToggle<CR>
-map <C-m> :Vista!!<CR>
+map <silent><nowait><C-n> :NERDTreeToggle<CR>
 
 if has('clipboard')
 	vnoremap <C-c> "+y
@@ -262,6 +273,8 @@ endif
 " turn hybrid line numbers on
 :set number relativenumber
 :set nu rnu
+
+let g:Hexokinase_highlighters = ['backgroundfull']
 
 set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | |    |   |   |    | |  + viminfo file path
