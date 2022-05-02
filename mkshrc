@@ -33,6 +33,8 @@ alias ssharchbox="ssh -p23 sean@ssh.hypnos.ws"
 alias sshmainbox="ssh -p24 server@ssh.hypnos.ws"
 alias sshcentos="ssh server2@ssh.hypnos.ws"
 alias sshpolaris="ssh -p25 server@ssh.hypnos.ws"
+alias cups-start="doas rc-service cupsd start"
+alias cups-stop="doas rc-service cupsd stop"
 export TERM='screen-256color'
 export TERMINAL="screen-256color"
 export terminal="screen-256color"
@@ -46,6 +48,7 @@ export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
 export ANDROID_SDK_HOME="/home/sean/.config/android"
 export DISTCC_DIR="/var/tmp/portage/.distcc"
 export WAKATIME_HOME="/home/sean/.config/wakatime"
+export PATH=$PATH:/home/sean/.emacs.d/bin
 
 #PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};

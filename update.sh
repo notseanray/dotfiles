@@ -19,4 +19,8 @@ cp /home/sean/.config/rfetch.txt ./config
 cp /home/sean/.config/sean/walls/* ./sean/walls
 cp /usr/src/linux/.config .
 mv .config kernel.config
+cp /home/sean/.config/picom.conf ./config/
+cp /home/sean/.doom.d/init.el ./doom.d/
+cp /home/sean/.doom.d/config.el ./doom.d/
+cp /home/sean/.doom.d/packages.el ./doom.d/
 notify-send "done"

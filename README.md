@@ -5,10 +5,11 @@ Please note all of this is quite messy, I'll organize it some day
 * distro: gentoo
 * app launcher: dmenu
 * wm: dwm
-* terminals: kitty, st
+* terminals: st
 * font: Terminus Nerd Complete
 * tui fm: ranger
 * shell: mksh
+* compositor: picom
 
 #### more
 
@@ -22,5 +23,6 @@ Please note all of this is quite messy, I'll organize it some day
 * exa over ls
 * bat over cat
 * doas over sudo
+* doom emacs
 
 ![ricepng](./ricey.png)
