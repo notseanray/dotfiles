@@ -1,0 +1,15 @@
+-rw-r--r-- 1 sean sean 485244 May 19 21:12 0BDFDB.plugin.js
+-rw-r--r-- 1 sean sean 306299 May  5 17:07 0PluginLibrary.plugin.js
+-rw-r--r-- 1 sean sean  16786 Mar  1 22:37 BetterVolume.plugin.js
+-rw-r--r-- 1 sean sean   5245 Mar  1 22:36 CallTimeCounter.plugin.js
+-rw-r--r-- 1 sean sean  10650 Mar  1 22:37 CreationDate.plugin.js
+-rw-r--r-- 1 sean sean   6296 Mar  1 22:53 DoNotTrack.plugin.js
+-rw-r--r-- 1 sean sean   5407 Mar  1 22:40 HideStreamPreview.plugin.js
+-rw-r--r-- 1 sean sean 100535 Apr  6 18:58 ImageUtilities.plugin.js
+-rw-r--r-- 1 sean sean  33662 Mar  1 22:37 InvisibleTyping.plugin.js
+-rw-r--r-- 1 sean sean  12781 Mar  1 22:38 JoinedAtDate.plugin.js
+-rw-r--r-- 1 sean sean  27294 May  5 17:07 MemberCount.plugin.js
+-rw-r--r-- 1 sean sean  50098 Apr 30 12:25 ShowHiddenChannels.plugin.js
+-rw-r--r-- 1 sean sean  13421 Apr 30 12:25 SplitLargeMessages.plugin.js
+-rw-r--r-- 1 sean sean  11955 Mar  1 22:40 TopRoleEverywhere.plugin.js
+-rw-r--r-- 1 sean sean  84348 Apr 30 12:52 Translator.plugin.js

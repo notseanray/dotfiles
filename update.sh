@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/mksh
 cp /home/sean/.config/Xresources .
 cp /home/sean/.config/Xdefaults  .
 cp /home/sean/.mkshrc .
@@ -23,4 +23,7 @@ cp /home/sean/.config/picom.conf ./config/
 cp /home/sean/.doom.d/init.el ./doom.d/
 cp /home/sean/.doom.d/config.el ./doom.d/
 cp /home/sean/.doom.d/packages.el ./doom.d/
+cp /home/sean/.config/BetterDiscord/themes/* ./BetterDiscord/themes
+touch ./BetterDiscord/plugins-list.txt
+ls -l /home/sean/.config/BetterDiscord/plugins/ | grep plugin.js > ./BetterDiscord/plugins-list.txt
 notify-send "done"

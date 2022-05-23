@@ -35,6 +35,8 @@ alias sshcentos="ssh server2@ssh.hypnos.ws"
 alias sshpolaris="ssh -p25 server@ssh.hypnos.ws"
 alias cups-start="doas rc-service cupsd start"
 alias cups-stop="doas rc-service cupsd stop"
+alias st="tabbed -r 2 st -w '' -e mksh"
+alias ..="cd .."
 export TERM='screen-256color'
 export TERMINAL="screen-256color"
 export terminal="screen-256color"
@@ -48,16 +50,12 @@ export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
 export ANDROID_SDK_HOME="/home/sean/.config/android"
 export DISTCC_DIR="/var/tmp/portage/.distcc"
 export WAKATIME_HOME="/home/sean/.config/wakatime"
-export PATH=$PATH:/home/sean/.emacs.d/bin
 
-#PS1="[\\[\033[90m\]\w\\[\033[37m\]\033[0m\]] \033[39m\]"
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
 print -nr -- "$d") 
 \a\e[1;34m\aλ \a\e[1;0m\a'
-#PS1=$'\e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
-#print -nr -- "$d") \a\e[1;34m\aδ \a\e[1;0m\a'
 
 . "$HOME/.config/.cargo/env"
-export NVM_DIR="$HOME/.config/nvm"
+#export NVM_DIR="$HOME/.config/nvm"
 #[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 todo

@@ -1,5 +1,6 @@
 [global]
 	monitor = 0
+	notification_limit = 4
 	padding = 4
 	horizontal_padding = 4
 	indicate_hidden = yes
@@ -20,10 +21,10 @@
 	class = Dunst
 	title = Dunst
 	always_run_script = true
+	width = 300
+	height = 100
 
 [urgency_low]
-	geometry = "250x11-30+45"
-	notification_height = 0
 	startup_notification = false
     # IMPORTANT: colors have to be defined in quotation marks.
     # Otherwise the "#" and following would be interpreted as a comment.
@@ -33,8 +34,6 @@
     timeout = 4
 
 [urgency_normal]
-	geometry = "250x11-30+45"
-	notification_height = 0
 	startup_notification = false
     background = "#111111"
     foreground = "#bababa"
@@ -42,8 +41,6 @@
     timeout = 6
 
 [urgency_critical]
-	geometry = "250x11-30+45"
-	notification_height = 0
 	startup_notification = false
     background = "#111111"
     foreground = "#bababa"
