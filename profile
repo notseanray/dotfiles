@@ -50,6 +50,8 @@ unset sh
 PS1="[\\033[90m\]\\w\\[\\033[37m\]] "
 #fi
 
+alias firefox=firefox-bin
+
 export HOME="/home/sean"
 export PATH=$PATH:$HOME/.config/scripts
 export XDG_CONFIG_HOME="$HOME/.config/"

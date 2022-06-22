@@ -46,10 +46,11 @@ trap 'DISPLAY=:$tty exec "${@:-$cfgdir/sxrc}" & wait "$!"' USR1
 wait "$pid"
 
 export DISPLAY=":1"
+export $(dbus-launch)
 
-xrandr --output DP-4 --mode 1920x1080 --rate 144.00 --primary
-xrandr --output HDMI-0 --mode 1920x1080 --rate 60.00 --rotate left --left-of DP-4 --rate 60.00
-xrandr --output DP-1 --mode 1920x1080 --right-of DP-4 --rotate right --rate 60.00
+xrandr --output DP-2 --mode 1920x1080 --rate 144.00 --primary
+xrandr --output HDMI-0 --mode 1920x1080 --rate 60.00 --rotate left --left-of DP-2 --rate 60.00
+xrandr --output DP-1 --mode 1920x1080 --right-of DP-2 --rotate right --rate 60.00
 xset r rate 300 30
 
 xrdb /home/sean/.config/Xresources
@@ -64,4 +65,4 @@ pulseaudio --daemonize=no --exit-idle-time=-1 > /dev/null 2>&1 &
 dunst > /dev/null 2>&1 &
 /home/sean/.config/scripts/sbar.sh > /dev/null 2>&1 &
 setwall $(cat /home/sean/.config/scripts/curwall)
-exec dwm > /dev/null 2>&1
+exec dbus-launch --exit-with-session dwm > /dev/null 2>&1

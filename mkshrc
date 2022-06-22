@@ -8,9 +8,8 @@ fi
 if [[ "$(pidof Xorg)" -gt 0 ]] ; then
 	xset r rate 300 30
 fi
-
 alias vvim="vim"
-alias sudo='doas'
+#alias sudo='doas'
 alias rm='rm -v -I'
 alias ll='exa --long --header'
 alias grep='rg'
@@ -33,10 +32,13 @@ alias ssharchbox="ssh -p23 sean@ssh.hypnos.ws"
 alias sshmainbox="ssh -p24 server@ssh.hypnos.ws"
 alias sshcentos="ssh server2@ssh.hypnos.ws"
 alias sshpolaris="ssh -p25 server@ssh.hypnos.ws"
+alias sshchronos="echo 'V2zh~Up#^Fcv\T8X' && ssh chezloc@5.9.70.55"
 alias cups-start="doas rc-service cupsd start"
 alias cups-stop="doas rc-service cupsd stop"
 alias st="tabbed -r 2 st -w '' -e mksh"
+alias stv="tabbed -r 2 st -w '' -e nvim"
 alias ..="cd .."
+alias firefox=firefox-bin
 export TERM='screen-256color'
 export TERMINAL="screen-256color"
 export terminal="screen-256color"
@@ -50,9 +52,10 @@ export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
 export ANDROID_SDK_HOME="/home/sean/.config/android"
 export DISTCC_DIR="/var/tmp/portage/.distcc"
 export WAKATIME_HOME="/home/sean/.config/wakatime"
+export GTK_USE_PORTAL=1
 
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
-print -nr -- "$d") 
+print -nr -- "$d")
 \a\e[1;34m\aλ \a\e[1;0m\a'
 
 . "$HOME/.config/.cargo/env"

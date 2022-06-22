@@ -22,29 +22,50 @@ Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
 Plug 'glepnir/galaxyline.nvim'
 Plug 'notseanray/nerd-galaxyline'
 Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
-Plug 'projekt0n/github-nvim-theme'
 Plug 'noib3/nvim-cokeline'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'jiangmiao/auto-pairs'
 Plug 'machakann/vim-sandwich'
 Plug 'airblade/vim-gitgutter'
-Plug 'tpope/vim-fugitive'
-Plug 'morhetz/gruvbox'
 Plug 'kyazdani42/nvim-tree.lua' |
-            \ Plug 'ryanoasis/vim-devicons' 
+            \ Plug 'ryanoasis/vim-devicons'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
-Plug 'rakr/vim-one'
-Plug 'timonv/vim-cargo'
 Plug 'wakatime/vim-wakatime'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
-Plug 'andweeb/presence.nvim'
+Plug 'ntpeters/vim-better-whitespace'
+
+Plug 'drewtempelmeyer/palenight.vim'
+" Plug 'projekt0n/github-nvim-theme'
+" Plug 'morhetz/gruvbox'
+" Plug 'rakr/vim-one'
 
 call plug#end()
 
-set shortmess+=c 
+colorscheme palenight
+
+set mouse=a
+
+" Function to trim extra whitespace in whole file
+function! Trim()
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+endfun
+
+command! -nargs=0 Trim call Trim()
+
+" auto + smart indent for code
+set autoindent
+set smartindent
+
+set visualbell
+set wrap
+
+set shortmess+=c
+set wildoptions+=pum
 set completeopt=menuone,noinsert,noselect
 
 " this variable must be enabled for colors to be applied properly
@@ -123,6 +144,16 @@ local opts = {
 	},
 }
 
+local servers = { 'pyright', 'tsserver', 'gopls' }
+for _, lsp in pairs(servers) do
+  require('lspconfig')[lsp].setup {
+    flags = {
+      -- This will be the default in neovim 0.7+
+      debounce_text_changes = 150,
+    }
+  }
+end
+
 require('rust-tools').setup(opts)
 
 local coq = require "coq"
@@ -151,6 +182,155 @@ require('cokeline').setup({
     },
   },
 })
+-- setup with all defaults
+-- each of these are documented in `:help nvim-tree.OPTION_NAME`
+-- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
+require'nvim-tree'.setup {
+  auto_reload_on_write = true,
+  create_in_closed_folder = false,
+  disable_netrw = false,
+  hijack_cursor = false,
+  hijack_netrw = true,
+  hijack_unnamed_buffer_when_opening = false,
+  ignore_buffer_on_setup = false,
+  open_on_setup = false,
+  open_on_setup_file = false,
+  open_on_tab = false,
+  sort_by = "name",
+  update_cwd = true,
+  reload_on_bufenter = false,
+  respect_buf_cwd = false,
+  view = {
+    adaptive_size = false,
+    width = 33,
+    height = 30,
+    hide_root_folder = true,
+    side = "left",
+    preserve_window_proportions = false,
+    number = true,
+    relativenumber = true,
+    signcolumn = "no",
+  },
+  renderer = {
+    add_trailing = false,
+    group_empty = false,
+    highlight_git = false,
+    highlight_opened_files = "none",
+    root_folder_modifier = ":~",
+    indent_markers = {
+      enable = true,
+      icons = {
+        corner = "└ ",
+        edge = "│ ",
+        none = "  ",
+      },
+    },
+    icons = {
+      webdev_colors = true,
+      git_placement = "before",
+      padding = " ",
+      symlink_arrow = " ➛ ",
+      show = {
+        file = true,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+      },
+      glyphs = {
+        default = " ",
+        symlink = " ",
+        folder = {
+          arrow_closed = "",
+          arrow_open = "",
+          default = " ",
+          open = " ",
+          empty = " ",
+          empty_open = " ",
+          symlink = " ",
+          symlink_open = " ",
+        },
+        git = {
+          unstaged = "✗",
+          staged = "✓",
+          unmerged = "",
+          renamed = "➜",
+          untracked = "★",
+          deleted = " ",
+          ignored = "◌",
+        },
+      },
+    },
+    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
+  },
+  hijack_directories = {
+    enable = true,
+    auto_open = true,
+  },
+  update_focused_file = {
+    enable = false,
+    update_cwd = false,
+    ignore_list = {},
+  },
+  ignore_ft_on_setup = {},
+  system_open = {
+    cmd = "",
+    args = {},
+  },
+  diagnostics = {
+    enable = true,
+    show_on_dirs = false,
+    icons = {
+      hint = " ",
+      info = " ",
+      warning = " ",
+      error = " ",
+    },
+  },
+  filters = {
+    dotfiles = false,
+    custom = {},
+    exclude = {},
+  },
+  git = {
+    enable = true,
+    ignore = true,
+    timeout = 500,
+  },
+  actions = {
+    use_system_clipboard = true,
+    change_dir = {
+      enable = true,
+      global = false,
+      restrict_above_cwd = false,
+    },
+    expand_all = {
+      max_folder_discovery = 100,
+    },
+    open_file = {
+      quit_on_open = false,
+      resize_window = true,
+      window_picker = {
+        enable = true,
+        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+        exclude = {
+          filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
+          buftype = { "nofile", "terminal", "help" },
+        },
+      },
+    },
+    remove_file = {
+      close_window = true,
+    },
+  },
+  trash = {
+    cmd = "trash",
+    require_confirm = true,
+  },
+  live_filter = {
+    prefix = "[FILTER]: ",
+    always_show_folders = true,
+  },
+} 
 EOF
 
 lua <<EOF
@@ -204,7 +384,7 @@ nnoremap <silent> <C-f>Telescope live_grep<CR>
 let g:presence_enable_line_number = 1
 
 " add '_' as a word delimeter
-set iskeyword-=_ 
+set iskeyword-=_
 
 " if the current buffer is open when fzf opens, jump to it in selection
 let g:fzf_buffers_jump = 1
@@ -215,7 +395,7 @@ let g:coq_settings = { 'display.icons.mode': 'none' }
 autocmd! FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
 
-" shorter lsp update time 
+" shorter lsp update time
 set updatetime=200
 " Show diagnostic popup on cursor hold
 autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false })
@@ -252,72 +432,6 @@ endfunction
 
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 
-" 0 by default, will enable file highlight for git attributes (can be used without the icons).
-let g:nvim_tree_git_hl = 1 
-" 0 by default, will enable folder and file icon highlight for opened files/directories.
-let g:nvim_tree_highlight_opened_files = 1 
-" This is the default. See :help filename-modifiers for more options
-let g:nvim_tree_root_folder_modifier = ':~' 
-" 0 by default, append a trailing slash to folder names
-let g:nvim_tree_add_trailing = 0
-" 0 by default, compact folders that only contain a single folder into one node in the file tree
-let g:nvim_tree_group_empty = 0 
-" one space by default, used for rendering the space between the icon and the filename. 
-" Use with caution, it could break rendering if you set an empty string depending on your font.
-let g:nvim_tree_icon_padding = ' ' 
-" defaults to ' ➛ '. used as a separator between symlinks' source and target.
-let g:nvim_tree_symlink_arrow = ' >> ' 
-" 0 by default, will change cwd of nvim-tree to that of new buffer's when opening nvim-tree.
-let g:nvim_tree_respect_buf_cwd = 0 
-" 0 by default, When creating files, sets the path of a file when cursor is on a closed folder to the parent folder when 0, and inside the folder when 1.
-let g:nvim_tree_create_in_closed_folder = 0 
-" List of filenames that gets highlighted with NvimTreeSpecialFile
-let g:nvim_tree_special_files = { 
-	\ 'README.md': 1, 
-	\ 'Makefile': 1, 
-	\ 'MAKEFILE': 1, 
-	\ 'readme.md': 1, 
-	\ 'Cargo.toml': 1, 
-	\ } 
-
-let g:nvim_tree_show_icons = {
-    \ 'git': 1,
-    \ 'folders': 1,
-    \ 'files': 1,
-    \ 'folder_arrows': 1,
-    \ }
-"If 0, do not show the icons for one of 'git' 'folder' and 'files'
-"1 by default, notice that if 'files' is 1, it will only display
-"if nvim-web-devicons is installed and on your runtimepath.
-"if folder is 1, you can also tell folder_arrows 1 to show small arrows next to the folder icons.
-"but this will not work when you set renderer.indent_markers.enable (because of UI conflict)
-
-" default will show icon by default if no icon is provided
-" default shows no icon by default
-let g:nvim_tree_icons = {
-    \ 'default': " ",
-    \ 'symlink': " ",
-    \ 'git': {
-    \   'unstaged': "✗ ",
-    \   'staged': "✓ ",
-    \   'unmerged': " ",
-    \   'renamed': "➜",
-    \   'untracked': "★ ",
-    \   'deleted': " ",
-    \   'ignored': "◌ "
-    \   },
-    \ 'folder': {
-    \   'arrow_open': " ",
-    \   'arrow_closed': " ",
-    \   'default': " ",
-    \   'open': " ",
-    \   'empty': " ",
-    \   'empty_open': " ",
-    \   'symlink': " ",
-    \   'symlink_open': " ",
-    \   }
-    \ }
-
 nnoremap <silent> <C-n> :NvimTreeToggle<CR>
 nnoremap <silent> <leader>r :NvimTreeRefresh<CR>
 nnoremap <silent> <leader>n :NvimTreeFindFile<CR>
@@ -330,14 +444,7 @@ nnoremap <silent> <leader>n :NvimTreeFindFile<CR>
 " NvimTreeCollapse
 " NvimTreeCollapseKeepBuffers
 
-set termguicolors 
-
-" a list of groups can be found at `:help nvim_tree_highlight`
-highlight NvimTreeFolderIcon guibg=blue
-
-" setup nvim-tree
-lua require'nvim-tree'.setup()
-
+set termguicolors
 
 nnoremap <silent> <C-h> :call WinMove('h')<CR>
 nnoremap <silent> <C-j> :call WinMove('j')<CR>
@@ -350,7 +457,7 @@ nnoremap <C-s> /
 nnoremap <silent> <esc> :noh <CR>
 
 " open terminal
-nnoremap <silent> t :terminal<CR> 
+nnoremap <silent> t :terminal<CR>
 
 " unicode characters in the file autoload/float.vim
 set encoding=utf-8
@@ -368,12 +475,12 @@ set cmdheight=1
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
 
-let g:gruvbox_contrast_dark = 'light'
-let g:gruvbox_improved_strings = '1'
-let g:gruvbox_improved_warnings = '1'
+" let g:gruvbox_contrast_dark = 'light'
+" let g:gruvbox_improved_strings = '1'
+" let g:gruvbox_improved_warnings = '1'
 
 " set gruvbox color scheme
-autocmd vimenter * ++nested colorscheme gruvbox
+" autocmd vimenter * ++nested colorscheme gruvbox
 " colorscheme github_dark
 
 " Always show the signcolumn, otherwise it would shift the text each time
@@ -409,12 +516,12 @@ tnoremap <Esc> <C-\><C-n>
 nnoremap <silent> gl :bn<CR>
 nnoremap <silent> gh :bp<CR>
 " kill buffer, gd doesn't seem right but g-kill makes sense
-nnoremap <silent> gk :bdelete!<CR>  
+nnoremap <silent> gk :bdelete!<CR>
 
 if has('clipboard')
 	" copy and cut to both buffers
-	vnoremap <silent> <C-c> "+y | %+y 
-	vnoremap <silent> <C-x> "+d | %+d 
+	vnoremap <silent> <C-c> "+y | %+y
+	vnoremap <silent> <C-x> "+d | %+d
 	nnoremap <silent> <p> "+p <CR>
 endif
 
