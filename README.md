@@ -5,8 +5,8 @@ Please note all of this is quite messy, I'll organize it some day
 * distro: gentoo
 * app launcher: dmenu
 * wm: dwm
-* terminals: st
-* font: Terminus Nerd Complete
+* terminal: st
+* font: JetBrains Mono
 * tui fm: ranger
 * shell: mksh
 * compositor: picom
@@ -23,6 +23,6 @@ Please note all of this is quite messy, I'll organize it some day
 * exa over ls
 * bat over cat
 * doas over sudo
-* doom emacs
+* doom emacs & nvim
 
 ![ricepng](./ricey.png)
