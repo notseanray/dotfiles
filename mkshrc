@@ -11,7 +11,7 @@ fi
 alias vvim="vim"
 #alias sudo='doas'
 alias rm='rm -v -I'
-alias ll='exa --long --header'
+alias ll='exa --long --header --icons'
 alias grep='rg'
 alias find='fd'
 alias ls='ls --color=auto'
@@ -53,6 +53,8 @@ export ANDROID_SDK_HOME="/home/sean/.config/android"
 export DISTCC_DIR="/var/tmp/portage/.distcc"
 export WAKATIME_HOME="/home/sean/.config/wakatime"
 export GTK_USE_PORTAL=1
+export BUN_INSTALL="/home/sean/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
 PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
 print -nr -- "$d")

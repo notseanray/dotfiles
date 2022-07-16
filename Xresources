@@ -3,39 +3,40 @@ Xcursor.size: 6
 ! special
 *.foreground:   #f0f0f0
 *.background:   #a89984
-! ^ st cursor color
+*.cursorColor:  #f0f0f0
 
 ! black
-*.color0:       #282828
-*.color8:       #665c53
+*.color0:       #27282d
+*.color8:       #6b7b88
 
 ! red
-*.color1:       #ec6863
-*.color9:       #D76B68
+*.color1:       #be5e67
+*.color9:       #d76b68
 
 ! green
-*.color2:       #aab765
-*.color10:      #949B77
+*.color2:       #bdccb2
+*.color10:      #8a9e7b
 
 ! yellow
 *.color3:       #e98b4d
 *.color11:      #c69e6d
 
 ! blue
-*.color4:       #7eb0a4
-*.color12:      #83a598
+*.color4:       #9abada
+*.color12:      #a4cef6
 
 ! magenta
-*.color5:       #d4869c
-*.color13:      #d3869b
+*.color5:       #dca5d2
+*.color13:      #e892d8
 
 ! cyan
-*.color6:       #8ab482
-*.color14:      #8ec07c
+*.color6:       #97c9c7
+*.color14:      #85cfcd
 
 ! white
-*.color7:       #d5bf98
-*.color15:      #ebdbb2
+*.color7:       #c9d2e4
+*.color15:      #c6d6f7
+
 
 !! Common Keybinds for Navigations
 URxvt.keysym.Shift-Up:             command:\033]720;1\007

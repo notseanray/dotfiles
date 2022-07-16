@@ -24,21 +24,21 @@ pre > code {
 /** End Iosevka */
 
 .theme-dark {
-    --background-primary: #282828;
-    --background-secondary: #282828;
-    --background-tertiary: #282828;
-    --background-accent: #6d6559;
-    --text-normal: #d5bf98;
-    --text-spotify: #ebdbb2;
-    --text-muted: #a89984;
-    --text-link: #83a598;
-    --background-floating: #282828;
-    --header-primary: #d5bf98;
-    --header-secondary: #ebdbb2;
+    --background-primary: #27282d;
+    --background-secondary: #27282d;
+    --background-tertiary: #27282d;
+    --background-accent: #6b7d88;
+    --text-normal: #c9d2e4;
+    --text-spotify: #c6d6f7;
+    --text-muted: #9abada;
+    --text-link: #97c9c7;
+    --background-floating: #27282d;
+    --header-primary: #c9d2e4;
+    --header-secondary: #9abada;
     --header-spotify: #8ec07c;
-    --interactive-normal: #d5bf98;
-    --interactive-hover: #ebdbb2;
-    --interactive-active: #a89984;
+    --interactive-normal: #9abada;
+    --interactive-hover: #c9d2e4;
+    --interactive-active: #d76b68;
     
 }
 

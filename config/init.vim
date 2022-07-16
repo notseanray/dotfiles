@@ -25,7 +25,7 @@ Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'noib3/nvim-cokeline'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
-Plug 'jiangmiao/auto-pairs'
+Plug 'kylechui/nvim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'airblade/vim-gitgutter'
 Plug 'kyazdani42/nvim-tree.lua' |
@@ -36,17 +36,22 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'ntpeters/vim-better-whitespace'
+Plug 'petertriho/nvim-scrollbar'
+Plug 'kevinhwang91/nvim-hlslens'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'doums/floaterm.nvim'
 
-Plug 'drewtempelmeyer/palenight.vim'
+" Plug 'drewtempelmeyer/palenight.vim'
 " Plug 'projekt0n/github-nvim-theme'
 " Plug 'morhetz/gruvbox'
-" Plug 'rakr/vim-one'
+Plug 'rakr/vim-one'
 
 call plug#end()
 
-colorscheme palenight
-
 set mouse=a
+
+colorscheme one
+set background=dark
 
 " Function to trim extra whitespace in whole file
 function! Trim()
@@ -56,6 +61,8 @@ function! Trim()
 endfun
 
 command! -nargs=0 Trim call Trim()
+autocmd BufWritePost * call Trim()
+autocmd BufWritePost * StripWhitespace
 
 " auto + smart indent for code
 set autoindent
@@ -70,6 +77,157 @@ set completeopt=menuone,noinsert,noselect
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
+
+lua << EOF
+require('floaterm').setup({
+	-- The command to run as a job, if nil run the 'shell'.
+	command = nil, -- string or list of string
+	-- The placement in the editor of the floating window.
+	layout = 'center', -- center | bottom | top | left | right
+	-- The width/height of the window. Must be a value between 0.1
+	-- and 1, 1 corresponds to 100% of the editor width/height.
+	width = 0.8,
+	height = 0.8,
+	-- Offset in character cells of the window, relative to the
+	-- layout.
+	row = 0,
+	col = 0,
+	-- Options passed to nvim_open_win (:h nvim_open_win())
+	-- You can use it to customize various things like border etc.
+	win_api = { style = 'minimal', relative = 'editor' },
+	-- Some mapping, exit: close the job and the window, normal:
+	-- switch to normal mode
+	keymaps = { exit = '<A-q>', normal = '<A-n>' },
+	-- Terminal buffer name
+	name = 'fterm',
+	-- Background color, default use the color from NormalFloat
+	bg_color = '#27282d', -- as hex color string eg. #212121
+	-- Border highlight group, default FloatBorder
+	border_hl = '#9abada',
+	-- `on_exit` a optional function to call when the terminal's job
+	-- exits. It will receive the job ID and exit code as argument.
+})
+EOF
+
+lua << EOF
+require'nvim-treesitter.configs'.setup {
+  -- A list of parser names, or "all"
+  ensure_installed = { "c", "lua", "rust" },
+
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+
+  -- Automatically install missing parsers when entering buffer
+  auto_install = true,
+
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+
+    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+    -- the name of the parser)
+    -- list of language that will be disabled
+    disable = { "c" },
+
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+EOF
+
+lua << EOF
+require("scrollbar").setup({
+    show = true,
+    show_in_active_only = false,
+    set_highlights = true,
+    folds = 500, -- handle folds, set to number to disable folds if no. of lines in buffer exceeds this
+    max_lines = false, -- disables if no. of lines in buffer exceeds this
+    handle = {
+        text = " ",
+        color = nil,
+        cterm = nil,
+        highlight = "CursorColumn",
+        hide_if_all_visible = true, -- Hides handle if all lines are visible
+    },
+    marks = {
+        Search = {
+            text = { "-", "=" },
+            priority = 0,
+            color = nil,
+            cterm = nil,
+            highlight = "Search",
+        },
+        Error = {
+            text = { "-", "=" },
+            priority = 1,
+            color = nil,
+            cterm = nil,
+            highlight = "DiagnosticVirtualTextError",
+        },
+        Warn = {
+            text = { "-", "=" },
+            priority = 2,
+            color = nil,
+            cterm = nil,
+            highlight = "DiagnosticVirtualTextWarn",
+        },
+        Info = {
+            text = { "-", "=" },
+            priority = 3,
+            color = nil,
+            cterm = nil,
+            highlight = "DiagnosticVirtualTextInfo",
+        },
+        Hint = {
+            text = { "-", "=" },
+            priority = 4,
+            color = nil,
+            cterm = nil,
+            highlight = "DiagnosticVirtualTextHint",
+        },
+        Misc = {
+            text = { "-", "=" },
+            priority = 5,
+            color = nil,
+            cterm = nil,
+            highlight = "Normal",
+        },
+    },
+    excluded_buftypes = {
+        "terminal",
+    },
+    excluded_filetypes = {
+        "prompt",
+        "TelescopePrompt",
+    },
+    autocmd = {
+        render = {
+            "BufWinEnter",
+            "TabEnter",
+            "TermEnter",
+            "WinEnter",
+            "CmdwinLeave",
+            "TextChanged",
+            "VimResized",
+            "WinScrolled",
+        },
+        clear = {
+            "BufWinLeave",
+            "TabLeave",
+            "TermLeave",
+            "WinLeave",
+        },
+    },
+    handlers = {
+        diagnostic = true,
+        search = true, -- Requires hlslens to be loaded, will run require("scrollbar.handlers.search").setup() for you
+    },
+})
+EOF
 
 lua << EOF
 -- default settings, but here anyway to allow easy swapping
@@ -182,6 +340,8 @@ require('cokeline').setup({
     },
   },
 })
+
+
 -- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 -- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
@@ -330,7 +490,7 @@ require'nvim-tree'.setup {
     prefix = "[FILTER]: ",
     always_show_folders = true,
   },
-} 
+}
 EOF
 
 lua <<EOF
@@ -457,7 +617,8 @@ nnoremap <C-s> /
 nnoremap <silent> <esc> :noh <CR>
 
 " open terminal
-nnoremap <silent> t :terminal<CR>
+nnoremap <silent> <C-t> :terminal<CR>
+nnoremap <silent> t :Fterm<CR>
 
 " unicode characters in the file autoload/float.vim
 set encoding=utf-8
