@@ -59,10 +59,14 @@ unset XDG_RUNTIME_DIR
 export XDG_RUNTIME_DIR=$(mktemp -d /tmp/$(id -u)-runtime-dir.XXX)
 killall pulseaudio
 # there should be no errors, so we can simply just yeet all output
-# I will save the dwm log because if that crashes then something is very wrong 
+# I will save the dwm log because if that crashes then something is very wrong
 pulseaudio --daemonize=no --exit-idle-time=-1 > /dev/null 2>&1 &
-# picom -b 2>&1 &
+# ntp replacement ofc
+TimeServe 192.168.1.97:3030
+picom -b 2>&1 &
 dunst > /dev/null 2>&1 &
 /home/sean/.config/scripts/sbar.sh > /dev/null 2>&1 &
 setwall $(cat /home/sean/.config/scripts/curwall)
 exec dbus-launch --exit-with-session dwm > /dev/null 2>&1
+#exec /home/sean/Desktop/stuff/wm-project/rwm/target/debug/rwm > ~/test.log
+#exec /home/sean/xwm > ~/test.log

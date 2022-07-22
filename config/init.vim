@@ -40,18 +40,23 @@ Plug 'petertriho/nvim-scrollbar'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'doums/floaterm.nvim'
+Plug 'xiyaowong/nvim-transparent'
+Plug 'chrisbra/csv.vim'
 
 " Plug 'drewtempelmeyer/palenight.vim'
-" Plug 'projekt0n/github-nvim-theme'
+Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 " Plug 'morhetz/gruvbox'
-Plug 'rakr/vim-one'
+" Plug 'rakr/vim-one'
+filetype plugin on
 
 call plug#end()
 
 set mouse=a
 
-colorscheme one
-set background=dark
+" colorscheme one
+" colorscheme one
+" set background=dark
+
 
 " Function to trim extra whitespace in whole file
 function! Trim()
@@ -77,6 +82,104 @@ set completeopt=menuone,noinsert,noselect
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
+
+" Compile Catppuccin
+autocmd BufWritePost init.vim :CatppuccinCompile
+
+lua << EOF
+require("transparent").setup({
+  enable = true, -- boolean: enable transparent
+})
+EOF
+
+lua << EOF
+	vim.g.catppuccin_flavour = "frappe" -- latte, frappe, macchiato, mocha
+	require("catppuccin").setup({
+		transparent_background = false,
+		term_colors = false,
+		compile = {
+			enabled = true,
+			path = vim.fn.stdpath "cache" .. "/catppuccin",
+		},
+		styles = {
+			comments = { "italic" },
+			conditionals = { "italic" },
+			loops = { "italic" },
+			functions = { "italic" },
+			keywords = { "italic" },
+			strings = { "italic" },
+			variables = { "italic" },
+			numbers = { "italic" },
+			booleans = { "italic" },
+			properties = { "italic" },
+			types = { "italic" },
+			operators = { "italic" },
+		},
+		integrations = {
+			treesitter = true,
+			native_lsp = {
+				enabled = true,
+				virtual_text = {
+					errors = { "italic" },
+					hints = { "italic" },
+					warnings = { "italic" },
+					information = { "italic" },
+				},
+				underlines = {
+					errors = { "underline" },
+					hints = { "underline" },
+					warnings = { "underline" },
+					information = { "underline" },
+				},
+			},
+			coc_nvim = false,
+			lsp_trouble = false,
+			cmp = true,
+			lsp_saga = false,
+			gitgutter = true,
+			gitsigns = true,
+			leap = false,
+			telescope = true,
+			nvimtree = {
+				enabled = true,
+				show_root = true,
+				transparent_panel = false,
+			},
+			neotree = {
+				enabled = false,
+				show_root = true,
+				transparent_panel = false,
+			},
+			dap = {
+				enabled = false,
+				enable_ui = false,
+			},
+			which_key = false,
+			indent_blankline = {
+				enabled = true,
+				colored_indent_levels = true,
+			},
+			dashboard = true,
+			neogit = false,
+			vim_sneak = false,
+			fern = false,
+			barbar = false,
+			bufferline = true,
+			markdown = true,
+			lightspeed = false,
+			ts_rainbow = false,
+			hop = false,
+			notify = true,
+			telekasten = true,
+			symbols_outline = true,
+		}
+	})
+	vim.cmd[[colorscheme catppuccin]]
+EOF
+
+" Catppuccin
+" let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
+" colorscheme catppuccin
 
 lua << EOF
 require('floaterm').setup({
@@ -128,7 +231,7 @@ require'nvim-treesitter.configs'.setup {
     -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
     -- the name of the parser)
     -- list of language that will be disabled
-    disable = { "c" },
+    -- disable = { "c" },
 
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
@@ -358,7 +461,7 @@ require'nvim-tree'.setup {
   open_on_tab = false,
   sort_by = "name",
   update_cwd = true,
-  reload_on_bufenter = false,
+  reload_on_bufenter = true,
   respect_buf_cwd = false,
   view = {
     adaptive_size = false,
@@ -367,7 +470,7 @@ require'nvim-tree'.setup {
     hide_root_folder = true,
     side = "left",
     preserve_window_proportions = false,
-    number = true,
+    number = false,
     relativenumber = true,
     signcolumn = "no",
   },
@@ -544,7 +647,7 @@ nnoremap <silent> <C-f>Telescope live_grep<CR>
 let g:presence_enable_line_number = 1
 
 " add '_' as a word delimeter
-set iskeyword-=_
+" set iskeyword-=_
 
 " if the current buffer is open when fzf opens, jump to it in selection
 let g:fzf_buffers_jump = 1

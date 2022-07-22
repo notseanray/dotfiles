@@ -24,6 +24,9 @@ cp /home/sean/.doom.d/init.el ./doom.d/
 cp /home/sean/.doom.d/config.el ./doom.d/
 cp /home/sean/.doom.d/packages.el ./doom.d/
 cp /home/sean/.config/BetterDiscord/themes/* ./BetterDiscord/themes
+cp /home/sean/.config/.zshrc zshrc
+cp -r /home/sean/.oh-my-zsh/themes/ .
+mv themes zsh_themes
 touch ./BetterDiscord/plugins-list.txt
 ls -l /home/sean/.config/BetterDiscord/plugins/ | grep plugin.js > ./BetterDiscord/plugins-list.txt
 notify-send "done"

@@ -10,28 +10,28 @@ Xcursor.size: 6
 *.color8:       #6b7b88
 
 ! red
-*.color1:       #be5e67
-*.color9:       #d76b68
+*.color6:       #be5e67
+*.color14:      #d76b68
 
 ! green
-*.color2:       #bdccb2
-*.color10:      #8a9e7b
+*.color1:       #bdccb2
+*.color9:       #8a9e7b
 
 ! yellow
 *.color3:       #e98b4d
 *.color11:      #c69e6d
 
 ! blue
-*.color4:       #9abada
-*.color12:      #a4cef6
+*.color2:       #9abada
+*.color10:      #a4cef6
 
 ! magenta
 *.color5:       #dca5d2
 *.color13:      #e892d8
 
 ! cyan
-*.color6:       #97c9c7
-*.color14:      #85cfcd
+*.color4:       #97c9c7
+*.color12:      #85cfcd
 
 ! white
 *.color7:       #c9d2e4
