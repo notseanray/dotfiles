@@ -5,4 +5,5 @@ if [[ "$(pidof Xorg)" -gt 0 ]] ; then
 	xset r rate 300 30
 fi
 export ZDOTDIR="/home/sean/.config"
+export CURRENT_DIR=$CWD
 zsh

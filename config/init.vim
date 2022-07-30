@@ -42,6 +42,12 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'doums/floaterm.nvim'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
+Plug 'numToStr/Comment.nvim'
+Plug 'rcarriga/nvim-notify'
+Plug 'jbyuki/venn.nvim'
+Plug 'notseanray/presence.nvim'
+Plug 'windwp/nvim-autopairs'
+Plug 'lukas-reineke/indent-blankline.nvim'
 
 " Plug 'drewtempelmeyer/palenight.vim'
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
@@ -57,6 +63,33 @@ set mouse=a
 " colorscheme one
 " set background=dark
 
+lua << EOF
+-- venn.nvim: enable or disable keymappings
+function _G.Toggle_venn()
+    local venn_enabled = vim.inspect(vim.b.venn_enabled)
+    if venn_enabled == "nil" then
+        vim.b.venn_enabled = true
+        vim.cmd[[setlocal ve=all]]
+        -- draw a line on HJKL keystokes
+        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+        -- draw a box by pressing "f" with visual selection
+        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+    else
+        vim.cmd[[setlocal ve=]]
+        vim.cmd[[mapclear <buffer>]]
+        vim.b.venn_enabled = nil
+    end
+end
+-- toggle keymappings for venn using <leader>v
+vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true})
+EOF
+
+let g:coq_settings = ({'display.icons.mode': 'none', 'keymap.jump_to_mark': '<C-i>', 'auto_start': v:false})
+
+lua require('Comment').setup()
 
 " Function to trim extra whitespace in whole file
 function! Trim()
@@ -87,9 +120,22 @@ set termguicolors
 autocmd BufWritePost init.vim :CatppuccinCompile
 
 lua << EOF
+require("notify").setup({
+	background_colour = "#c9d2e4",
+	render = "minimal",
+})
+
+vim.notify = require("notify")
+
 require("transparent").setup({
   enable = true, -- boolean: enable transparent
 })
+vim.opt.list = true
+vim.opt.listchars:append "space:⋅"
+
+require("indent_blankline").setup {
+	space_char_blankline = "",
+}
 EOF
 
 lua << EOF
@@ -177,6 +223,7 @@ lua << EOF
 	vim.cmd[[colorscheme catppuccin]]
 EOF
 
+
 " Catppuccin
 " let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
 " colorscheme catppuccin
@@ -213,6 +260,9 @@ require('floaterm').setup({
 EOF
 
 lua << EOF
+require('nvim-autopairs').setup({
+  enable_check_bracket_line = false
+})
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
   ensure_installed = { "c", "lua", "rust" },
@@ -404,20 +454,19 @@ local opts = {
 		auto_focus = false,
 	},
 }
+local coq = require "coq"
 
-local servers = { 'pyright', 'tsserver', 'gopls' }
+local servers = { 'pyright', 'tsserver', 'gopls', 'clangd' }
 for _, lsp in pairs(servers) do
-  require('lspconfig')[lsp].setup {
+  require('lspconfig')[lsp].setup(coq.lsp_ensure_capabilities({
     flags = {
       -- This will be the default in neovim 0.7+
       debounce_text_changes = 150,
     }
-  }
+  }))
 end
 
 require('rust-tools').setup(opts)
-
-local coq = require "coq"
 
 local get_hex = require('cokeline/utils').get_hex
 require('cokeline').setup({
@@ -530,9 +579,9 @@ require'nvim-tree'.setup {
     auto_open = true,
   },
   update_focused_file = {
-    enable = false,
-    update_cwd = false,
-    ignore_list = {},
+    enable = true,
+    update_cwd = true,
+    ignore_list = {"node_modules", "target"},
   },
   ignore_ft_on_setup = {},
   system_open = {
@@ -652,8 +701,6 @@ let g:presence_enable_line_number = 1
 " if the current buffer is open when fzf opens, jump to it in selection
 let g:fzf_buffers_jump = 1
 
-let g:coq_settings = { 'display.icons.mode': 'none' }
-
 " disable status line for fzf
 autocmd! FileType fzf set laststatus=0 noshowmode noruler
   \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
@@ -716,6 +763,7 @@ nnoremap <silent> <C-l> :call WinMove('l')<CR>
 
 " comfy keybind to search
 nnoremap <C-s> /
+vnoremap <silent> <C-s> gc
 " clear search next time esc is hit
 nnoremap <silent> <esc> :noh <CR>
 

@@ -1,0 +1,62 @@
+alias vvim="vim"
+alias rm='rm -v -I'
+alias ll='exa --long --header --icons'
+alias grep='rg'
+alias find='fd'
+alias ls='ls --color=auto'
+alias sd="nsxiv -a"
+alias v="nvim"
+alias c="bat"
+alias cat="c"
+alias vim="nvim"
+alias wwget="wget"
+alias wget="aria2c"
+alias mkc=". mkc"
+alias cl=". cl"
+alias cdl=". cl"
+alias mkshify="python3 ~/.config/scripts/mkshify.py"
+alias xcopy="xclip -selection c"
+alias xpaste="xclip -selection c -o"
+alias ssharchbox="ssh -p23 sean@ssh.hypnos.ws"
+alias sshmainbox="ssh -p24 server@ssh.hypnos.ws"
+alias sshcentos="ssh server2@ssh.hypnos.ws"
+alias sshpolaris="ssh -p25 server@ssh.hypnos.ws"
+alias sshchronos="echo 'V2zh~Up#^Fcv\T8X' && ssh chezloc@5.9.70.55"
+alias cups-start="doas rc-service cupsd start"
+alias cups-stop="doas rc-service cupsd stop"
+alias st="tabbed -r 2 st -w '' -e mksh"
+alias stv="tabbed -r 2 st -w '' -e nvim"
+alias ..="cd .."
+alias ...="cd ../.."
+alias firefox=firefox-bin
+alias wi="whereis"
+alias xrdb="xrdb ~/.config/Xresources"
+alias vc="nvim ~/.config/nvim/init.vim"
+export TERM='screen-256color'
+export EDITOR="nvim"
+export TERMINAL="screen-256color"
+export terminal="screen-256color"
+export COLORTERM="truecolor"
+export _JAVA_AWT_WM_NONREPARENTING=1
+export LOGNAME="sean"
+export HOSTNAME="seantoo"
+export MAIL="/var/spool/mail/sean"
+export GRADLE_USER_HOME="/home/sean/.config/gradle"
+export NPM_CONFIG_USERCONFIG="/home/sean/.config/npmrc"
+export ANDROID_SDK_HOME="/home/sean/.config/android"
+export DISTCC_DIR="/var/tmp/portage/.distcc"
+export WAKATIME_HOME="/home/sean/.config/wakatime"
+export GTK_USE_PORTAL=1
+export BUN_INSTALL="/home/sean/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export CARGO_HOME="/home/sean/.config/.cargo/"
+
+# mksh only
+# PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
+# print -nr -- "$d")
+# \a\e[1;34m\aλ \a\e[1;0m\a'
+
+. "$HOME/.config/.cargo/env"
+#export NVM_DIR="$HOME/.config/nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+todo
