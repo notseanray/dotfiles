@@ -62,7 +62,7 @@ killall pulseaudio
 # I will save the dwm log because if that crashes then something is very wrong
 pulseaudio --daemonize=no --exit-idle-time=-1 > /dev/null 2>&1 &
 # ntp replacement ofc
-TimeServe 192.168.1.97:3030
+TimeServe 132.145.193.229:45000
 picom -b 2>&1 &
 dunst > /dev/null 2>&1 &
 /home/sean/.config/scripts/sbar.sh > /dev/null 2>&1 &
