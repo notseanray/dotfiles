@@ -758,7 +758,25 @@ nnoremap <silent> <leader>fh <cmd>Telescope help_tags<CR>
 nnoremap <silent> <C-b>Telescope buffers<CR>
 nnoremap <silent> <C-f>Telescope live_grep<CR>
 
-let g:presence_enable_line_number = 1
+" General options
+let g:presence_auto_update         = 1
+let g:presence_neovim_image_text   = "nvim > vscode"
+let g:presence_main_image          = "neovim"
+let g:presence_client_id           = "793271441293967371"
+let g:presence_debounce_timeout    = 500
+let g:presence_enable_line_number  = 1
+let g:presence_blacklist           = []
+let g:presence_buttons             = 1
+let g:presence_file_assets         = {}
+
+" Rich Presence text options
+let g:presence_editing_text        = "editing %s"
+let g:presence_file_explorer_text  = "browsing %s"
+let g:presence_git_commit_text     = "git-ing good"
+let g:presence_plugin_manager_text = "fixing plugins"
+let g:presence_reading_text        = "reading %s"
+let g:presence_workspace_text      = "working on %s"
+let g:presence_line_number_text    = "line [%s/%s]"
 
 " add '_' as a word delimeter
 " set iskeyword-=_
@@ -893,7 +911,7 @@ tnoremap <Esc> <C-\><C-n>
 nnoremap <silent> gl :bn<CR>
 nnoremap <silent> gh :bp<CR>
 " kill buffer, gd doesn't seem right but g-kill makes sense
-nnoremap <silent> gk :bdelete!<CR>
+nnoremap <silent> gk :bp<bar>sp<bar>bn<bar>bd<CR>
 
 if has('clipboard')
 	" copy and cut to both buffers

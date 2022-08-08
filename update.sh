@@ -1,4 +1,4 @@
-#!/bin/mksh
+#!/bin/sh
 cp /home/sean/.config/Xresources .
 cp /home/sean/.config/Xdefaults  .
 cp /home/sean/.mkshrc .
