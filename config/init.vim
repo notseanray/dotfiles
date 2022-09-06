@@ -8,6 +8,7 @@ if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.config/nvim/plugged')
+Plug 'glepnir/dashboard-nvim'
 Plug 'lambdalisue/suda.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'williamboman/nvim-lsp-installer'
@@ -23,7 +24,6 @@ Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
 Plug 'glepnir/galaxyline.nvim'
 Plug 'notseanray/nerd-galaxyline'
 Plug 'sbdchd/neoformat'
-Plug 'rrethy/vim-hexokinase', { 'do': 'make hexokinase' }
 Plug 'noib3/nvim-cokeline'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
@@ -41,7 +41,6 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'petertriho/nvim-scrollbar'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'doums/floaterm.nvim'
 Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
@@ -50,17 +49,20 @@ Plug 'jbyuki/venn.nvim'
 Plug 'notseanray/presence.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
+Plug 'p00f/clangd_extensions.nvim'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'mrshmllow/document-color.nvim'
 
-
-" Plug 'drewtempelmeyer/palenight.vim'
+Plug 'drewtempelmeyer/palenight.vim'
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
-" Plug 'morhetz/gruvbox'
-" Plug 'rakr/vim-one'
-filetype plugin on
-
 call plug#end()
 
 set mouse=a
+
+" this variable must be enabled for colors to be applied properly
+set termguicolors
+
+filetype plugin on
 
 " prettier for formatting on save
 let g:neoformat_try_node_exe = 1
@@ -68,6 +70,91 @@ let g:neoformat_try_node_exe = 1
 " colorscheme one
 " colorscheme one
 " set background=dark
+
+
+lua << EOF
+require("nvim-lsp-installer").setup({
+    automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+    ui = {
+        icons = {
+            server_installed = "✓",
+            server_pending = "➜",
+            server_uninstalled = "✗"
+        }
+    }
+})
+EOF
+
+lua <<EOF
+  local home = os.getenv('HOME')
+  local db = require('dashboard')
+  db.custom_header = {
+    \'',
+    \'   ⣴⣶⣤⡤⠦⣤⣀⣤⠆     ⣈⣭⣭⣿⣶⣿⣦⣼⣆         ',
+    \'    ⠉⠻⢿⣿⠿⣿⣿⣶⣦⠤⠄⡠⢾⣿⣿⡿⠋⠉⠉⠻⣿⣿⡛⣦       ',
+    \'          ⠈⢿⣿⣟⠦ ⣾⣿⣿⣷⠄⠄⠄⠄⠻⠿⢿⣿⣧⣄     ',
+    \'           ⣸⣿⣿⢧ ⢻⠻⣿⣿⣷⣄⣀⠄⠢⣀⡀⠈⠙⠿⠄    ',
+    \'          ⢠⣿⣿⣿⠈  ⠡⠌⣻⣿⣿⣿⣿⣿⣿⣿⣛⣳⣤⣀⣀   ',
+    \'   ⢠⣧⣶⣥⡤⢄ ⣸⣿⣿⠘⠄ ⢀⣴⣿⣿⡿⠛⣿⣿⣧⠈⢿⠿⠟⠛⠻⠿⠄  ',
+    \'  ⣰⣿⣿⠛⠻⣿⣿⡦⢹⣿⣷   ⢊⣿⣿⡏  ⢸⣿⣿⡇ ⢀⣠⣄⣾⠄   ',
+    \' ⣠⣿⠿⠛⠄⢀⣿⣿⣷⠘⢿⣿⣦⡀ ⢸⢿⣿⣿⣄ ⣸⣿⣿⡇⣪⣿⡿⠿⣿⣷⡄  ',
+    \' ⠙⠃   ⣼⣿⡟  ⠈⠻⣿⣿⣦⣌⡇⠻⣿⣿⣷⣿⣿⣿ ⣿⣿⡇⠄⠛⠻⢷⣄ ',
+    \'      ⢻⣿⣿⣄   ⠈⠻⣿⣿⣿⣷⣿⣿⣿⣿⣿⡟ ⠫⢿⣿⡆     ',
+    \'       ⠻⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⣿⣿⣿⣿⡟⢀⣀⣤⣾⡿⠃     ',
+    \'                                   ',
+    \'               NEOVIM              ',
+    \
+  }
+  db.custom_footer = { "NVIM > VSCode" }
+  db.custom_center = {
+      {icon = '  ',
+      desc = 'Recently latest session                ',
+      shortcut = 'SPC s l',
+      action ='SessionLoad'},
+      {icon = '  ',
+      desc = 'Recently opened files                   ',
+      action =  'DashboardFindHistory',
+      shortcut = 'SPC f h'},
+      {icon = '  ',
+      desc = 'Find  File                              ',
+      action = 'Telescope find_files find_command=rg,--hidden,--files',
+      shortcut = 'SPC f f'},
+      {icon = '  ',
+      desc ='File Browser                            ',
+      action =  'Telescope file_browser',
+      shortcut = 'SPC f b'},
+      {icon = '  ',
+      desc = 'Find  word                              ',
+      action = 'Telescope live_grep',
+      shortcut = 'SPC f w'},
+      {icon = '  ',
+      desc = 'Open Personal dotfiles                  ',
+      action = 'Telescope dotfiles path=' .. home ..'/Desktop/stuff/dotfiles',
+      shortcut = 'SPC f d'},
+    }
+
+EOF
+" For 'Yggdroot/indentLine' and 'lukas-reineke/indent-blankline.nvim' "
+let g:indentLine_fileTypeExclude = ['dashboard']
+" For 'ntpeters/vim-better-whitespace' "
+let g:better_whitespace_filetypes_blacklist = ['dashboard']
+
+
+lua << EOF
+require 'colorizer'.setup {
+  'scss';
+  'html';
+  'vue';
+  'svelte';
+  'tsx';
+  'jsx';
+  'css';
+  'javascript';
+  html = {
+    mode = 'foreground';
+  }
+}
+EOF
 
 
 lua << EOF
@@ -116,7 +203,7 @@ require('gitsigns').setup {
   preview_config = {
     -- Options passed to nvim_open_win
     border = 'rounded',
-	style = '',
+    style = '',
     relative = 'cursor',
     row = 0,
     col = 1
@@ -167,8 +254,8 @@ autocmd BufWritePost * call Trim()
 autocmd BufWritePost * StripWhitespace
 
 " auto + smart indent for code
-set autoindent
-set smartindent
+" set autoindent
+" set smartindent
 
 set visualbell
 set wrap
@@ -177,16 +264,18 @@ set shortmess+=c
 set wildoptions+=pum
 set completeopt=menuone,noinsert,noselect
 
-" this variable must be enabled for colors to be applied properly
-set termguicolors
 
 " Compile Catppuccin
 autocmd BufWritePost init.vim :CatppuccinCompile
 
 lua << EOF
 require("notify").setup({
-	background_colour = "#c9d2e4",
-	render = "minimal",
+    relative = "editor",
+    anchor = "NE",
+    width = 50,
+    height = 10,
+    background_colour = "#c9d2e4",
+    render = "minimal",
 })
 
 vim.notify = require("notify")
@@ -198,130 +287,99 @@ vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 
 require("indent_blankline").setup {
-	space_char_blankline = "",
+    space_char_blankline = "",
 }
 EOF
 
 lua << EOF
-	vim.g.catppuccin_flavour = "frappe" -- latte, frappe, macchiato, mocha
-	require("catppuccin").setup({
-		transparent_background = false,
-		term_colors = false,
-		compile = {
-			enabled = true,
-			path = vim.fn.stdpath "cache" .. "/catppuccin",
-		},
-		styles = {
-			comments = { "italic" },
-			conditionals = { "italic" },
-			loops = { "italic" },
-			functions = { "italic" },
-			keywords = { "italic" },
-			strings = { "italic" },
-			variables = { "italic" },
-			numbers = { "italic" },
-			booleans = { "italic" },
-			properties = { "italic" },
-			types = { "italic" },
-			operators = { "italic" },
-		},
-		integrations = {
-			treesitter = true,
-			native_lsp = {
-				enabled = true,
-				virtual_text = {
-					errors = { "italic" },
-					hints = { "italic" },
-					warnings = { "italic" },
-					information = { "italic" },
-				},
-				underlines = {
-					errors = { "underline" },
-					hints = { "underline" },
-					warnings = { "underline" },
-					information = { "underline" },
-				},
-			},
-			coc_nvim = false,
-			lsp_trouble = false,
-			cmp = true,
-			lsp_saga = false,
-			gitgutter = true,
-			gitsigns = true,
-			leap = false,
-			telescope = true,
-			nvimtree = {
-				enabled = true,
-				show_root = true,
-				transparent_panel = false,
-			},
-			neotree = {
-				enabled = false,
-				show_root = true,
-				transparent_panel = false,
-			},
-			dap = {
-				enabled = false,
-				enable_ui = false,
-			},
-			which_key = false,
-			indent_blankline = {
-				enabled = true,
-				colored_indent_levels = true,
-			},
-			dashboard = true,
-			neogit = false,
-			vim_sneak = false,
-			fern = false,
-			barbar = false,
-			bufferline = true,
-			markdown = true,
-			lightspeed = false,
-			ts_rainbow = false,
-			hop = false,
-			notify = true,
-			telekasten = true,
-			symbols_outline = true,
-		}
-	})
-	vim.cmd[[colorscheme catppuccin]]
+    vim.g.catppuccin_flavour = "frappe" -- latte, frappe, macchiato, mocha
+    require("catppuccin").setup({
+        transparent_background = false,
+        term_colors = false,
+        compile = {
+            enabled = true,
+            path = vim.fn.stdpath "cache" .. "/catppuccin",
+        },
+        styles = {
+            comments = { "italic" },
+            conditionals = { "italic" },
+            loops = { "italic" },
+            functions = { "italic" },
+            keywords = { "italic" },
+            strings = { "italic" },
+            variables = { "italic" },
+            numbers = { "italic" },
+            booleans = { "italic" },
+            properties = { "italic" },
+            types = { "italic" },
+            operators = { "italic" },
+        },
+        integrations = {
+            treesitter = true,
+            native_lsp = {
+                enabled = true,
+                virtual_text = {
+                    errors = { "italic" },
+                    hints = { "italic" },
+                    warnings = { "italic" },
+                    information = { "italic" },
+                },
+                underlines = {
+                    errors = { "underline" },
+                    hints = { "underline" },
+                    warnings = { "underline" },
+                    information = { "underline" },
+                },
+            },
+            coc_nvim = false,
+            lsp_trouble = false,
+            cmp = true,
+            lsp_saga = false,
+            gitgutter = true,
+            gitsigns = true,
+            leap = false,
+            telescope = true,
+            nvimtree = {
+                enabled = true,
+                show_root = true,
+                transparent_panel = false,
+            },
+            neotree = {
+                enabled = false,
+                show_root = true,
+                transparent_panel = false,
+            },
+            dap = {
+                enabled = false,
+                enable_ui = false,
+            },
+            which_key = false,
+            indent_blankline = {
+                enabled = true,
+                colored_indent_levels = true,
+            },
+            dashboard = true,
+            neogit = false,
+            vim_sneak = false,
+            fern = false,
+            barbar = false,
+            bufferline = true,
+            markdown = true,
+            lightspeed = false,
+            ts_rainbow = false,
+            hop = false,
+            notify = true,
+            telekasten = true,
+            symbols_outline = true,
+        }
+    })
+    vim.cmd[[colorscheme catppuccin]]
 EOF
 
 
 " Catppuccin
 " let g:catppuccin_flavour = "mocha" " latte, frappe, macchiato, mocha
 " colorscheme catppuccin
-
-lua << EOF
-require('floaterm').setup({
-	-- The command to run as a job, if nil run the 'shell'.
-	command = nil, -- string or list of string
-	-- The placement in the editor of the floating window.
-	layout = 'center', -- center | bottom | top | left | right
-	-- The width/height of the window. Must be a value between 0.1
-	-- and 1, 1 corresponds to 100% of the editor width/height.
-	width = 0.8,
-	height = 0.8,
-	-- Offset in character cells of the window, relative to the
-	-- layout.
-	row = 0,
-	col = 0,
-	-- Options passed to nvim_open_win (:h nvim_open_win())
-	-- You can use it to customize various things like border etc.
-	win_api = { style = 'minimal', relative = 'editor' },
-	-- Some mapping, exit: close the job and the window, normal:
-	-- switch to normal mode
-	keymaps = { exit = '<A-q>', normal = '<A-n>' },
-	-- Terminal buffer name
-	name = 'fterm',
-	-- Background color, default use the color from NormalFloat
-	bg_color = '#27282d', -- as hex color string eg. #212121
-	-- Border highlight group, default FloatBorder
-	border_hl = '#9abada',
-	-- `on_exit` a optional function to call when the terminal's job
-	-- exits. It will receive the job ID and exit code as argument.
-})
-EOF
 
 lua << EOF
 require('nvim-autopairs').setup({
@@ -447,6 +505,79 @@ require("scrollbar").setup({
 EOF
 
 lua << EOF
+require("clangd_extensions").setup {
+    server = {
+        -- options to pass to nvim-lspconfig
+        -- i.e. the arguments to require("lspconfig").clangd.setup({})
+    },
+    extensions = {
+        -- defaults:
+        -- Automatically set inlay hints (type hints)
+        autoSetHints = true,
+        -- These apply to the default ClangdSetInlayHints command
+        inlay_hints = {
+            -- Only show inlay hints for the current line
+            only_current_line = false,
+            -- Event which triggers a refersh of the inlay hints.
+            -- You can make this "CursorMoved" or "CursorMoved,CursorMovedI" but
+            -- not that this may cause  higher CPU usage.
+            -- This option is only respected when only_current_line and
+            -- autoSetHints both are true.
+            only_current_line_autocmd = "CursorHold",
+            -- whether to show parameter hints with the inlay hints or not
+            show_parameter_hints = true,
+            -- prefix for parameter hints
+            parameter_hints_prefix = "<- ",
+            -- prefix for all the other hints (type, chaining)
+            other_hints_prefix = "=> ",
+            -- whether to align to the length of the longest line in the file
+            max_len_align = false,
+            -- padding from the left if max_len_align is true
+            max_len_align_padding = 1,
+            -- whether to align to the extreme right or not
+            right_align = false,
+            -- padding from the right if right_align is true
+            right_align_padding = 7,
+            -- The color of the hints
+            highlight = "Comment",
+            -- The highlight group priority for extmark
+            priority = 100,
+        },
+        ast = {
+            role_icons = {
+                type = "",
+                declaration = "",
+                expression = "",
+                specifier = "",
+                statement = "",
+                ["template argument"] = "",
+            },
+
+            kind_icons = {
+                Compound = "",
+                Recovery = "",
+                TranslationUnit = "",
+                PackExpansion = "",
+                TemplateTypeParm = "",
+                TemplateTemplateParm = "",
+                TemplateParamObject = "",
+            },
+
+            highlights = {
+                detail = "Comment",
+            },
+        },
+        memory_usage = {
+            border = "none",
+        },
+        symbol_info = {
+            border = "none",
+        },
+    },
+}
+EOF
+
+lua << EOF
 -- default settings, but here anyway to allow easy swapping
 require('telescope').setup {
   extensions = {
@@ -469,7 +600,7 @@ local nvim_lsp = require'lspconfig'
 local opts = {
     tools = { -- rust-tools options
         autoSetHints = true,
-        hover_with_actions = true,
+        --hover_with_actions = true,
         inlay_hints = {
             show_parameter_hints = false,
             parameter_hints_prefix = "",
@@ -491,36 +622,62 @@ local opts = {
                 checkOnSave = {
                     command = "clippy"
                 },
-				inlay_hints = {
-					maxLength = 20,
-					closureReturnTypeHints = true
-				}
+                inlay_hints = {
+                    maxLength = 20,
+                    closureReturnTypeHints = true
+                }
             }
         }
     },
-	-- options same as lsp hover / vim.lsp.util.open_floating_preview()
-	hover_actions = {
-		-- the border that is used for the hover window
-		-- see vim.api.nvim_open_win()
-		border = {
-			{ "╭", "FloatBorder" },
-			{ "─", "FloatBorder" },
-			{ "╮", "FloatBorder" },
-			{ "│", "FloatBorder" },
-			{ "╯", "FloatBorder" },
-			{ "─", "FloatBorder" },
-			{ "╰", "FloatBorder" },
-			{ "│", "FloatBorder" },
-		},
+    -- options same as lsp hover / vim.lsp.util.open_floating_preview()
+    hover_actions = {
+        -- the border that is used for the hover window
+        -- see vim.api.nvim_open_win()
+        border = {
+            { "╭", "FloatBorder" },
+            { "─", "FloatBorder" },
+            { "╮", "FloatBorder" },
+            { "│", "FloatBorder" },
+            { "╯", "FloatBorder" },
+            { "─", "FloatBorder" },
+            { "╰", "FloatBorder" },
+            { "│", "FloatBorder" },
+        },
 
-		-- whether the hover action window gets automatically focused
-		-- default: false
-		auto_focus = false,
-	},
+        -- whether the hover action window gets automatically focused
+        -- default: false
+        auto_focus = false,
+    },
 }
-local coq = require "coq"
 
-local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss' }
+require("document-color").setup {
+    -- Default options
+    mode = "background", -- "background" | "foreground" | "single"
+}
+
+local on_attach = function(client)
+  if client.server_capabilities.colorProvider then
+    -- Attach document colour support
+    require("document-color").buf_attach(bufnr)
+  end
+end
+
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+-- You are now capable!
+capabilities.textDocument.colorProvider = {
+  dynamicRegistration = true
+}
+
+-- Lsp servers that support documentColor
+require("lspconfig").tailwindcss.setup({
+  on_attach = on_attach,
+  capabilities = capabilities
+})
+
+local coq = require"coq"
+
+local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd' }
 
 for _, lsp in pairs(servers) do
   require('lspconfig')[lsp].setup(coq.lsp_ensure_capabilities({
@@ -711,6 +868,7 @@ require'nvim-tree'.setup {
 EOF
 
 lua <<EOF
+local coq = require'coq'
 local cmp = require'cmp'
 cmp.setup(coq.lsp_ensure_capabilities({
   -- Enable LSP snippets
@@ -851,8 +1009,7 @@ vnoremap <silent> <C-s> gc
 nnoremap <silent> <esc> :noh <CR>
 
 " open terminal
-nnoremap <silent> <C-t> :terminal<CR>
-nnoremap <silent> t :Fterm<CR>
+nnoremap <silent> t :terminal<CR>
 
 " unicode characters in the file autoload/float.vim
 set encoding=utf-8
@@ -914,10 +1071,10 @@ nnoremap <silent> gh :bp<CR>
 nnoremap <silent> gk :bp<bar>sp<bar>bn<bar>bd<CR>
 
 if has('clipboard')
-	" copy and cut to both buffers
-	vnoremap <silent> <C-c> "+y | %+y
-	vnoremap <silent> <C-x> "+d | %+d
-	nnoremap <silent> <p> "+p <CR>
+    " copy and cut to both buffers
+    vnoremap <silent> <C-c> "+y | %+y
+    vnoremap <silent> <C-x> "+d | %+d
+    nnoremap <silent> <p> "+p <CR>
 endif
 
 " turn hybrid line numbers on
@@ -935,6 +1092,9 @@ autocmd BufWrite * call g:ChmodOnWrite()
 
 let g:Hexokinase_highlighters = ['backgroundfull']
 
+" :Rename command
+command! -nargs=1 Rename saveas <args> | call delete(expand('#')) | bd #
+
 set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | |    |   |   |    | |  + viminfo file path
 "           | |    |   |   |    | + file marks 0-9,A-Z 0=NOT stored
@@ -947,6 +1107,12 @@ set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 
 " move vim info file
 set viminfo+=n~/.config/viminfo
-
+" The width of a hard tabstop measured in "spaces" -- effectively the (maximum) width of an actual tab character.
 set tabstop=4
+" Setting this to a non-zero value other than tabstop will make the tab key (in insert mode) insert a combination of spaces (and possibly tabs) to simulate tab stops at this width.
+set softtabstop=4
+" Enabling this will make the tab key (in insert mode) insert spaces instead of tab characters. This also affects the behavior of the retab command.
+set expandtab
+" Enabling this will make the tab key (in insert mode) insert spaces or tabs to go to the next indent of the next tabstop when the cursor is at the beginning of a line (i.e. the only preceding characters are whitespace).
+set smarttab
 set shiftwidth=4

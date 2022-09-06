@@ -10,14 +10,17 @@
 @import url("https://cdn.jsdelivr.net/npm/@typopro/web-iosevka@3.7.5/TypoPRO-Iosevka.css");
 
 code {
-    font-family: "Iosevka Term", monospace;
+    font-family: "ComicCodeLigatures Nerd Font", monospace;
     font-weight: 400;
 }
 
 /* Iosevka on Powercord */
 pre > code {
-    font-family: "Iosevka Term", monospace;
+    font-family: "ComicCodeLigatures Nerd Font", monospace;
     font-weight: 400;
+}
+* {
+    font-family: "ComicCodeLigatures Nerd Font";
 }
 
 
