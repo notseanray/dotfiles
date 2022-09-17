@@ -24,12 +24,13 @@ Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
 Plug 'glepnir/galaxyline.nvim'
 Plug 'notseanray/nerd-galaxyline'
 Plug 'sbdchd/neoformat'
-Plug 'noib3/nvim-cokeline'
+Plug 'nanozuki/tabby.nvim'
 Plug 'ms-jpq/coq_nvim', {'branch': 'coq'}
 Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'kylechui/nvim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'monaqa/dial.nvim'
 Plug 'kyazdani42/nvim-tree.lua' |
             \ Plug 'ryanoasis/vim-devicons'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -52,8 +53,8 @@ Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'p00f/clangd_extensions.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'mrshmllow/document-color.nvim'
+Plug 'sindrets/winshift.nvim'
 
-Plug 'drewtempelmeyer/palenight.vim'
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 call plug#end()
 
@@ -67,10 +68,116 @@ filetype plugin on
 " prettier for formatting on save
 let g:neoformat_try_node_exe = 1
 
+" always show tab line
+set showtabline=1
+
+" open default file if buffer name is empty
+" au VimEnter * if eval("@%") == "" | e ~/Desktop/common.md | endif
+
 " colorscheme one
 " colorscheme one
 " set background=dark
 
+lua << EOF
+local augend = require("dial.augend")
+require("dial.config").augends:register_group{
+  -- default augends used when no group name is specified
+  default = {
+    augend.integer.alias.decimal,   -- nonnegative decimal number (0, 1, 2, 3, ...)
+    augend.integer.alias.hex,       -- nonnegative hex number  (0x01, 0x1a1f, etc.)
+    augend.date.alias["%Y/%m/%d"],  -- date (2022/02/19, etc.)
+  },
+
+  -- augends used when group with name `mygroup` is specified
+  mygroup = {
+    augend.integer.alias.decimal,
+    augend.constant.alias.bool,    -- boolean value (true <-> false)
+    augend.date.alias["%m/%d/%Y"], -- date (02/19/2022, etc.)
+  }
+}
+EOF
+
+nmap  <C-a>  <Plug>(dial-increment)
+nmap  <C-x>  <Plug>(dial-decrement)
+vmap  <C-a>  <Plug>(dial-increment)
+vmap  <C-x>  <Plug>(dial-decrement)
+vmap g<C-a> g<Plug>(dial-increment)
+vmap g<C-x> g<Plug>(dial-decrement)
+
+lua << EOF
+require("winshift").setup({
+  highlight_moving_win = true,  -- Highlight the window being moved
+  focused_hl_group = "Visual",  -- The highlight group used for the moving window
+  moving_win_options = {
+    -- These are local options applied to the moving window while it's
+    -- being moved. They are unset when you leave Win-Move mode.
+    wrap = false,
+    cursorline = false,
+    cursorcolumn = false,
+    colorcolumn = "",
+  },
+  keymaps = {
+    disable_defaults = false, -- Disable the default keymaps
+    win_move_mode = {
+      ["h"] = "left",
+      ["j"] = "down",
+      ["k"] = "up",
+      ["l"] = "right",
+      ["H"] = "far_left",
+      ["J"] = "far_down",
+      ["K"] = "far_up",
+      ["L"] = "far_right",
+      ["<left>"] = "left",
+      ["<down>"] = "down",
+      ["<up>"] = "up",
+      ["<right>"] = "right",
+      ["<S-left>"] = "far_left",
+      ["<S-down>"] = "far_down",
+      ["<S-up>"] = "far_up",
+      ["<S-right>"] = "far_right",
+    },
+  },
+  ---A function that should prompt the user to select a window.
+  ---
+  ---The window picker is used to select a window while swapping windows with
+  ---`:WinShift swap`.
+  ---@return integer? winid # Either the selected window ID, or `nil` to
+  ---   indicate that the user cancelled / gave an invalid selection.
+  window_picker = function()
+    return require("winshift.lib").pick_window({
+      -- A string of chars used as identifiers by the window picker.
+      picker_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+      filter_rules = {
+        -- This table allows you to indicate to the window picker that a window
+        -- should be ignored if its buffer matches any of the following criteria.
+        cur_win = true, -- Filter out the current window
+        floats = true,  -- Filter out floating windows
+        filetype = {},  -- List of ignored file types
+        buftype = {},   -- List of ignored buftypes
+        bufname = {},   -- List of vim regex patterns matching ignored buffer names
+      },
+      ---A function used to filter the list of selectable windows.
+      ---@param winids integer[] # The list of selectable window IDs.
+      ---@return integer[] filtered # The filtered list of window IDs.
+      filter_func = nil,
+    })
+  end,
+})
+EOF
+
+" Start Win-Move mode:
+nnoremap <C-W><C-M> <Cmd>WinShift<CR>
+nnoremap <C-W>m <Cmd>WinShift<CR>
+
+" Swap two windows:
+nnoremap <C-W>x <Cmd>WinShift swap<CR>
+
+" If you don't want to use Win-Move mode you can create mappings for calling the
+" move commands directly:
+nnoremap <C-M-H> <Cmd>WinShift left<CR>
+nnoremap <C-M-J> <Cmd>WinShift down<CR>
+nnoremap <C-M-K> <Cmd>WinShift up<CR>
+nnoremap <C-M-L> <Cmd>WinShift right<CR>
 
 lua << EOF
 require("nvim-lsp-installer").setup({
@@ -292,7 +399,7 @@ require("indent_blankline").setup {
 EOF
 
 lua << EOF
-    vim.g.catppuccin_flavour = "frappe" -- latte, frappe, macchiato, mocha
+    vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
     require("catppuccin").setup({
         transparent_background = false,
         term_colors = false,
@@ -690,30 +797,140 @@ end
 
 require('rust-tools').setup(opts)
 
-local get_hex = require('cokeline/utils').get_hex
-require('cokeline').setup({
-  components = {
-    {
-      text = function(buffer) return (buffer.index ~= 1) and '▏' or '' end,
-      fg = get_hex('Normal', 'fg')
-    },
-    {
-      text = function(buffer) return '    ' .. buffer.devicon.icon end,
-      fg = function(buffer) return buffer.devicon.color end,
-    },
-    {
-      text = function(buffer) return buffer.filename .. '    ' end,
-      style = function(buffer) return buffer.is_focused and 'bold' or nil end,
-    },
-    {
-      text = '',
-      delete_buffer_on_left_click = true,
-    },
-    {
-      text = '  ',
-    },
+local palettes = {
+  gruvbox_light = {
+    accent = '#d65d0e', -- orange
+    accent_sec = '#7c6f64', -- fg4
+    bg = '#ebdbb2', -- bg1
+    bg_sec = '#d5c4a1', -- bg2
+    fg = '#504945', -- fg2
+    fg_sec = '#665c54', -- fg3
   },
-})
+  gruvbox_dark = {
+    accent = '#d65d0e', -- orange
+    accent_sec = '#a89984', -- fg4
+    bg = '#3c3836', -- bg1
+    bg_sec = '#504945', -- bg2
+    fg = '#d5c4a1', -- fg2
+    fg_sec = '#bdae93', -- fg3
+  },
+  edge_light = {
+    accent = '#bf75d6', -- bg_purple
+    accent_sec = '#8790a0', -- grey
+    bg = '#eef1f4', -- bg1
+    bg_sec = '#dde2e7', -- bg4
+    fg = '#33353f', -- default:bg1
+    fg_sec = '#4b505b', -- fg
+  },
+  nord = {
+    accent = '#88c0d0', -- nord8
+    accent_sec = '#81a1c1', -- nord9
+    bg = '#3b4252', -- nord1
+    bg_sec = '#4c566a', -- nord3
+    fg = '#e5e9f0', -- nord4
+    fg_sec = '#d8dee9', -- nord4
+  },
+}
+
+local theme = {
+  fill = 'TabLineFill',
+  -- Also you can do this: fill = { fg='#f2e9de', bg='#907aa9', style='italic' }
+  head = 'TabLine',
+  current_tab = 'TabLineSel',
+  tab = 'TabLine',
+  win = 'TabLine',
+  tail = 'TabLine',
+}
+local tabby_config = function()
+  local palette = palettes.nord
+  local filename = require('tabby.filename')
+  local cwd = function()
+    return ' ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' '
+  end
+  local tabname = function(tabid)
+    return vim.api.nvim_tabpage_get_number(tabid)
+  end
+  local line = {
+    hl = { fg = palette.fg, bg = palette.bg },
+    layout = 'active_wins_at_tail',
+    head = {
+      { cwd, hl = { fg = palette.bg, bg = palette.accent } },
+      { '', hl = { fg = palette.accent, bg = palette.bg } },
+    },
+    active_tab = {
+      label = function(tabid)
+        return {
+          '  ' .. tabname(tabid) .. ' ',
+          hl = { fg = palette.bg, bg = palette.accent_sec, style = 'bold' },
+        }
+      end,
+      left_sep = { '', hl = { fg = palette.accent_sec, bg = palette.bg } },
+      right_sep = { '', hl = { fg = palette.accent_sec, bg = palette.bg } },
+    },
+    inactive_tab = {
+      label = function(tabid)
+        return {
+          '  ' .. tabname(tabid) .. ' ',
+          hl = { fg = palette.fg, bg = palette.bg_sec, style = 'bold' },
+        }
+      end,
+      left_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+      right_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+    },
+    top_win = {
+      label = function(winid)
+        return {
+          '  ' .. filename.unique(winid) .. ' ',
+          hl = { fg = palette.fg, bg = palette.bg_sec },
+        }
+      end,
+      left_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+      right_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+    },
+    win = {
+      label = function(winid)
+        return {
+          '  ' .. filename.unique(winid) .. ' ',
+          hl = { fg = palette.fg, bg = palette.bg_sec },
+        }
+      end,
+      left_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+      right_sep = { '', hl = { fg = palette.bg_sec, bg = palette.bg } },
+    },
+    tail = {
+      { '', hl = { fg = palette.accent_sec, bg = palette.bg } },
+      { '  ', hl = { fg = palette.bg, bg = palette.accent_sec } },
+    },
+  }
+  require('tabby').setup({ tabline = line })
+end
+tabby_config()
+
+
+-- local get_hex = require('cokeline/utils').get_hex
+-- require('cokeline').setup({
+--   components = {
+--     {
+--       text = function(buffer) return (buffer.index ~= 1) and '▏' or '' end,
+--       fg = get_hex('Normal', 'fg')
+--     },
+--     {
+--       text = function(buffer) return '    ' .. buffer.devicon.icon end,
+--       fg = function(buffer) return buffer.devicon.color end,
+--     },
+--     {
+--       text = function(buffer) return buffer.filename .. '    ' end,
+--       style = function(buffer) return buffer.is_focused and 'bold' or nil end,
+--     },
+--     {
+--       text = '',
+--       delete_buffer_on_left_click = true,
+--     },
+--     {
+--       text = '  ',
+--     },
+--   },
+-- })
 
 
 -- setup with all defaults
@@ -983,7 +1200,14 @@ endfunction
 
 autocmd BufEnter * ++nested if winnr('$') == 1 && bufname() == 'NvimTree_' . tabpagenr() | quit | endif
 
-nnoremap <silent> <C-n> :NvimTreeToggle<CR>
+function InitialOpen()
+    if eval("@%") == ""
+        :DashboardNewFile
+    endif
+    :NvimTreeToggle
+endfunction
+
+nnoremap <silent> <C-n> :call InitialOpen()<CR>
 nnoremap <silent> <leader>r :NvimTreeRefresh<CR>
 nnoremap <silent> <leader>n :NvimTreeFindFile<CR>
 " More available functions:
