@@ -11,7 +11,8 @@ call plug#begin('~/.config/nvim/plugged')
 Plug 'glepnir/dashboard-nvim'
 Plug 'lambdalisue/suda.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'williamboman/nvim-lsp-installer'
+Plug 'williamboman/mason.nvim'
+Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/cmp-nvim-lsp'
@@ -31,8 +32,8 @@ Plug 'kylechui/nvim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'monaqa/dial.nvim'
-Plug 'kyazdani42/nvim-tree.lua' |
-            \ Plug 'ryanoasis/vim-devicons'
+Plug 'kyazdani42/nvim-tree.lua', { 'on': 'NvimTreeToggle' }
+Plug 'ryanoasis/vim-devicons', { 'on': 'NvimTreeToggle' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'wakatime/vim-wakatime'
 Plug 'nvim-lua/plenary.nvim'
@@ -197,11 +198,11 @@ require('spellsitter').setup {
 }
 local my_augroup = vim.api.nvim_create_augroup("my_augroup", { clear = true })
 
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = { "python", "lua" }, -- disable spellchecking for these filetypes
---   command = "setlocal nospell",
---   group = my_augroup,
--- })
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "json" }, -- disable spellchecking for these filetypes
+  command = "setlocal nospell",
+  group = my_augroup,
+})
 vim.api.nvim_create_autocmd("TermOpen", {
   pattern = "*", -- disable spellchecking in the embeded terminal
   command = "setlocal nospell",
@@ -295,16 +296,95 @@ nnoremap <C-M-K> <Cmd>WinShift up<CR>
 nnoremap <C-M-L> <Cmd>WinShift right<CR>
 
 lua << EOF
-require("nvim-lsp-installer").setup({
-    automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
+local DEFAULT_SETTINGS = {
+    ui = {
+        -- Whether to automatically check for new versions when opening the :Mason window.
+        check_outdated_packages_on_open = true,
+
+        -- The border to use for the UI window. Accepts same border values as |nvim_open_win()|.
+        border = "none",
+
+         icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+        },
+
+        keymaps = {
+            -- Keymap to expand a package
+            toggle_package_expand = "<CR>",
+            -- Keymap to install the package under the current cursor position
+            install_package = "i",
+            -- Keymap to reinstall/update the package under the current cursor position
+            update_package = "u",
+            -- Keymap to check for new version for the package under the current cursor position
+            check_package_version = "c",
+            -- Keymap to update all installed packages
+            update_all_packages = "U",
+            -- Keymap to check which installed packages are outdated
+            check_outdated_packages = "C",
+            -- Keymap to uninstall a package
+            uninstall_package = "X",
+            -- Keymap to cancel a package installation
+            cancel_installation = "<C-c>",
+            -- Keymap to apply language filter
+            apply_language_filter = "<C-f>",
+        },
+    },
+
+    -- The directory in which to install packages.
+    -- install_root_dir = path.concat { vim.fn.stdpath "data", "mason" },
+
+    pip = {
+        -- These args will be added to `pip install` calls. Note that setting extra args might impact intended behavior
+        -- and is not recommended.
+        --
+        -- Example: { "--proxy", "https://proxyserver" }
+        install_args = {},
+    },
+
+    -- Controls to which degree logs are written to the log file. It's useful to set this to vim.log.levels.DEBUG when
+    -- debugging issues with package installations.
+    log_level = vim.log.levels.INFO,
+
+    -- Limit for the maximum amount of packages to be installed at the same time. Once this limit is reached, any further
+    -- packages that are requested to be installed will be put in a queue.
+    max_concurrent_installers = 4,
+
+    github = {
+        -- The template URL to use when downloading assets from GitHub.
+        -- The placeholders are the following (in order):
+        -- 1. The repository (e.g. "rust-lang/rust-analyzer")
+        -- 2. The release version (e.g. "v0.3.0")
+        -- 3. The asset name (e.g. "rust-analyzer-v0.3.0-x86_64-unknown-linux-gnu.tar.gz")
+        download_url_template = "https://github.com/%s/releases/download/%s/%s",
+    },
+}
+
+require("mason").setup({
     ui = {
         icons = {
-            server_installed = "✓",
-            server_pending = "➜",
-            server_uninstalled = "✗"
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
         }
     }
 })
+local MASON_DEFAULT = {
+    -- A list of servers to automatically install if they're not already installed. Example: { "rust_analyzer@nightly", "sumneko_lua" }
+    -- This setting has no relation with the `automatic_installation` setting.
+    ensure_installed = { "rust_analyzer", "pyright", "jdtls", "tsserver", "gopls", "volar", "tailwindcss", "clangd" },
+
+    -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed.
+    -- This setting has no relation with the `ensure_installed` setting.
+    -- Can either be:
+    --   - false: Servers are not automatically installed.
+    --   - true: All servers set up via lspconfig are automatically installed.
+    --   - { exclude: string[] }: All servers set up via lspconfig, except the ones provided in the list, are automatically installed.
+    --       Example: automatic_installation = { exclude = { "rust_analyzer", "solargraph" } }
+    automatic_installation = false,
+}
+require("mason-lspconfig").setup(MASON_DEFAULT)
 EOF
 
 lua <<EOF
@@ -378,19 +458,6 @@ require 'colorizer'.setup {
 }
 EOF
 
-
-lua << EOF
-require("nvim-lsp-installer").setup({
-    automatic_installation = true, -- automatically detect which servers to install (based on which servers are set up via lspconfig)
-    ui = {
-        icons = {
-            server_installed = "✓",
-            server_pending = "➜",
-            server_uninstalled = "✗"
-        }
-    }
-})
-EOF
 
 lua << EOF
 require('gitsigns').setup {
@@ -899,7 +966,7 @@ require("lspconfig").tailwindcss.setup({
 
 local coq = require"coq"
 
-local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd' }
+local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd', 'jdtls' }
 
 for _, lsp in pairs(servers) do
   require('lspconfig')[lsp].setup(coq.lsp_ensure_capabilities({
@@ -1429,6 +1496,19 @@ endfunction
 
 autocmd BufWrite * call g:ChmodOnWrite()
 
+" handle urls with # in them correctly
+function! HandleURL()
+  let s:uri = matchstr(getline("."), '[a-z]*:\/\/[^ >,;]*')
+  echo s:uri
+  if s:uri != ""
+    silent exec "!xdg-open '".s:uri."'"
+  else
+    echo "No URI found in line."
+  endif
+endfunction
+
+map <leader>u :call HandleURL()<cr>
+
 let g:Hexokinase_highlighters = ['backgroundfull']
 
 " :Rename command
@@ -1444,6 +1524,13 @@ set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | + lines saved each register (old name for <, vi6.2)
 "           + save/restore buffer list
 
+augroup myvimrc
+    au!
+    au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+augroup END
+
+command! PU PlugUpdate | PlugUpgrade
+
 " move vim info file
 set viminfo+=n~/.config/viminfo
 " The width of a hard tabstop measured in "spaces" -- effectively the (maximum) width of an actual tab character.
@@ -1455,3 +1542,30 @@ set expandtab
 " Enabling this will make the tab key (in insert mode) insert spaces or tabs to go to the next indent of the next tabstop when the cursor is at the beginning of a line (i.e. the only preceding characters are whitespace).
 set smarttab
 set shiftwidth=4
+
+" auto update plugged every week
+function! OnVimEnter() abort
+  if exists('g:plug_home')
+    let l:filename = printf('%s/.vim_plug_update', g:plug_home)
+    if filereadable(l:filename) == 0
+      call writefile([], l:filename)
+    endif
+
+    let l:this_week = strftime('%Y_%V')
+    let l:contents = readfile(l:filename)
+    if index(l:contents, l:this_week) < 0
+      " launch headless
+      call execute(':!nvim +PlugUpdate +qa > /dev/null 2&>1')
+      call writefile([l:this_week], l:filename, 'a')
+    endif
+  endif
+endfunction
+
+autocmd VimEnter * call OnVimEnter()
+
+if has ('autocmd') && execute("file") != ".config/nvim/init.vim" " Remain compatible with earlier versions
+ augroup vimrc
+    autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
+    autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
+  augroup END
+endif " has autocmd

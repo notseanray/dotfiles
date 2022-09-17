@@ -66,6 +66,7 @@ export GTK_USE_PORTAL=1
 export BUN_INSTALL="/home/sean/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 export CARGO_HOME="/home/sean/.config/.cargo/"
+export MYVIMRC="/home/sean/.config/nvim/init.vim"
 
 # mksh only
 # PS1=$'\a\e[1;34m\a\a\e[32m\a$(date +%H:%M)\a\e[0m\a \e[0;33m\a$(local d=${PWD:-?} p=~; [[ $p = ?(*/) ]] || d=${d/#$p/~};
