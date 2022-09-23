@@ -57,7 +57,7 @@ Plug 'mrshmllow/document-color.nvim'
 Plug 'sindrets/winshift.nvim'
 Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
-Plug 'lewis6991/spellsitter.nvim'
+" Plug 'lewis6991/spellsitter.nvim'
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 call plug#end()
@@ -170,6 +170,7 @@ set showtabline=1
 " set background=dark
 
 lua << EOF
+vim.opt.signcolumn = "yes"
 local augend = require("dial.augend")
 require("dial.config").augends:register_group{
   -- default augends used when no group name is specified
@@ -191,27 +192,27 @@ local ccc = require("ccc")
 local mapping = ccc.mapping
 ccc.setup({})
 
-require('spellsitter').setup {
-  -- Whether enabled, can be a list of filetypes, e.g. {'python', 'lua'}
-  enable = true,
-  debug = false
-}
-local my_augroup = vim.api.nvim_create_augroup("my_augroup", { clear = true })
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "json" }, -- disable spellchecking for these filetypes
-  command = "setlocal nospell",
-  group = my_augroup,
-})
-vim.api.nvim_create_autocmd("TermOpen", {
-  pattern = "*", -- disable spellchecking in the embeded terminal
-  command = "setlocal nospell",
-  group = my_augroup,
-})
+-- require('spellsitter').setup {
+--   -- Whether enabled, can be a list of filetypes, e.g. {'python', 'lua'}
+--   enable = true,
+--   debug = false
+-- }
+-- local my_augroup = vim.api.nvim_create_augroup("my_augroup", { clear = true })
+--
+-- vim.api.nvim_create_autocmd("FileType", {
+--   pattern = { "json" }, -- disable spellchecking for these filetypes
+--   command = "setlocal nospell",
+--   group = my_augroup,
+-- })
+-- vim.api.nvim_create_autocmd("TermOpen", {
+--   pattern = "*", -- disable spellchecking in the embeded terminal
+--   command = "setlocal nospell",
+--   group = my_augroup,
+-- })
 EOF
 
-set spell
-syntax on
+" set spell
+" syntax on
 
 nmap  <C-a>  <Plug>(dial-increment)
 nmap  <C-x>  <Plug>(dial-decrement)
@@ -1113,6 +1114,7 @@ tabby_config()
 --     },
 --   },
 -- })
+
 
 
 -- setup with all defaults
