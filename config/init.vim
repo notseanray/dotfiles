@@ -57,7 +57,9 @@ Plug 'mrshmllow/document-color.nvim'
 Plug 'sindrets/winshift.nvim'
 Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
-" Plug 'lewis6991/spellsitter.nvim'
+Plug 'sindrets/diffview.nvim'
+Plug 'kevinhwang91/promise-async'
+Plug 'kevinhwang91/nvim-ufo'
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 call plug#end()
@@ -170,7 +172,6 @@ set showtabline=1
 " set background=dark
 
 lua << EOF
-vim.opt.signcolumn = "yes"
 local augend = require("dial.augend")
 require("dial.config").augends:register_group{
   -- default augends used when no group name is specified
@@ -192,28 +193,29 @@ local ccc = require("ccc")
 local mapping = ccc.mapping
 ccc.setup({})
 
--- require('spellsitter').setup {
---   -- Whether enabled, can be a list of filetypes, e.g. {'python', 'lua'}
---   enable = true,
---   debug = false
--- }
--- local my_augroup = vim.api.nvim_create_augroup("my_augroup", { clear = true })
---
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = { "json" }, -- disable spellchecking for these filetypes
---   command = "setlocal nospell",
---   group = my_augroup,
--- })
--- vim.api.nvim_create_autocmd("TermOpen", {
---   pattern = "*", -- disable spellchecking in the embeded terminal
---   command = "setlocal nospell",
---   group = my_augroup,
--- })
+--  require('spellsitter').setup {
+--    -- Whether enabled, can be a list of filetypes, e.g. {'python', 'lua'}
+--    enable = true,
+--    debug = false
+--  }
+local my_augroup = vim.api.nvim_create_augroup("my_augroup", { clear = true })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "json" }, -- disable spellchecking for these filetypes
+  command = "setlocal nospell",
+  group = my_augroup,
+})
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*", -- disable spellchecking in the embeded terminal
+  command = "setlocal nospell",
+  group = my_augroup,
+})
 EOF
 
 " set spell
-" syntax on
+syntax on
 
+" increment decrement etc
 nmap  <C-a>  <Plug>(dial-increment)
 nmap  <C-x>  <Plug>(dial-decrement)
 vmap  <C-a>  <Plug>(dial-increment)
@@ -954,6 +956,12 @@ end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
+-- nvim ufo folding
+capabilities.textDocument.foldingRange = {
+    dynamicRegistration = false,
+    lineFoldingOnly = true
+}
+
 -- You are now capable!
 capabilities.textDocument.colorProvider = {
   dynamicRegistration = true
@@ -965,17 +973,84 @@ require("lspconfig").tailwindcss.setup({
   capabilities = capabilities
 })
 
-local coq = require"coq"
+local ftMap = {
+    vim = 'indent',
+    python = {'indent'},
+    git = ''
+}
 
-local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd', 'jdtls' }
+local handler = function(virtText, lnum, endLnum, width, truncate)
+    local newVirtText = {}
+    local suffix = ('  %d '):format(endLnum - lnum)
+    local sufWidth = vim.fn.strdisplaywidth(suffix)
+    local targetWidth = width - sufWidth
+    local curWidth = 0
+    for _, chunk in ipairs(virtText) do
+        local chunkText = chunk[1]
+        local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+        if targetWidth > curWidth + chunkWidth then
+            table.insert(newVirtText, chunk)
+        else
+            chunkText = truncate(chunkText, targetWidth - curWidth)
+            local hlGroup = chunk[2]
+            table.insert(newVirtText, {chunkText, hlGroup})
+            chunkWidth = vim.fn.strdisplaywidth(chunkText)
+            -- str width returned from truncate() may less than 2nd argument, need padding
+            if curWidth + chunkWidth < targetWidth then
+                suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+            end
+            break
+        end
+        curWidth = curWidth + chunkWidth
+    end
+    table.insert(newVirtText, {suffix, 'MoreMsg'})
+    return newVirtText
+end
+
+vim.keymap.set('n', 'zK', function()
+    local winid = require('ufo').peekFoldedLinesUnderCursor()
+    if not winid then
+        -- choose one of them
+        -- coc.nvim
+        -- vim.fn.CocActionAsync('definitionHover')
+        -- nvimlsp
+        vim.lsp.buf.hover()
+    end
+end)
+
+require('ufo').setup({
+    fold_virt_text_handler = handler,
+    open_fold_hl_timeout = 100,
+    close_fold_kinds = {'imports', 'comment'},
+    preview = {
+        win_config = {
+            border = {'', '─', '', '', '', '─', '', ''},
+            winhighlight = 'Normal:Folded',
+            winblend = 0
+        },
+        mappings = {
+            scrollU = '<C-u>',
+            scrollD = '<C-d>'
+        }
+    },
+    provider_selector = function(bufnr, filetype, buftype)
+        -- if you prefer treesitter provider rather than lsp,
+        -- return ftMap[filetype] or {'treesitter', 'indent'}
+        -- return ftMap[filetype]
+        return {'treesitter', 'indent'}
+
+        -- refer to ./doc/example.lua for detail
+    end
+})
+
+-- local coq = require"coq"
+
+local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd', 'jdtls', 'svelte-language-server' }
 
 for _, lsp in pairs(servers) do
-  require('lspconfig')[lsp].setup(coq.lsp_ensure_capabilities({
-    flags = {
-      -- This will be the default in neovim 0.7+
-      debounce_text_changes = 150,
-    }
-  }))
+    require('lspconfig')[lsp].setup({
+        capabilities = capabilities,
+    })
 end
 
 require('rust-tools').setup(opts)
@@ -1116,7 +1191,6 @@ tabby_config()
 -- })
 
 
-
 -- setup with all defaults
 -- each of these are documented in `:help nvim-tree.OPTION_NAME`
 -- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
@@ -1137,7 +1211,7 @@ require'nvim-tree'.setup {
   respect_buf_cwd = false,
   view = {
     adaptive_size = false,
-    width = 33,
+    width = 30,
     height = 30,
     hide_root_folder = true,
     side = "left",
@@ -1526,8 +1600,7 @@ set viminfo=%,<800,'10,/50,:100,h,f0,n~/.config/viminfo
 "           | + lines saved each register (old name for <, vi6.2)
 "           + save/restore buffer list
 
-augroup myvimrc
-    au!
+augroup myvimrc au!
     au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
 augroup END
 
