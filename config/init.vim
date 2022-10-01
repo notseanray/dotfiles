@@ -43,7 +43,7 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'petertriho/nvim-scrollbar'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'xiyaowong/nvim-transparent'
+" Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
@@ -57,14 +57,19 @@ Plug 'mrshmllow/document-color.nvim'
 Plug 'sindrets/winshift.nvim'
 Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
-Plug 'sindrets/diffview.nvim'
-Plug 'kevinhwang91/promise-async'
-Plug 'kevinhwang91/nvim-ufo'
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
+Plug 'projekt0n/github-nvim-theme'
+Plug 'morhetz/gruvbox'
 call plug#end()
 
 set mouse=a
+
+let g:gruvbox_italic=1
+let g:gruvbox_contrast_light="hard"
+autocmd vimenter * ++nested colorscheme gruvbox
+set background=light   " Setting light mode
+" colorscheme github_light_default
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
@@ -572,9 +577,9 @@ require("notify").setup({
 
 vim.notify = require("notify")
 
-require("transparent").setup({
-  enable = true, -- boolean: enable transparent
-})
+-- require("transparent").setup({
+--   enable = true, -- boolean: enable transparent
+-- })
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 
@@ -582,91 +587,91 @@ require("indent_blankline").setup {
     space_char_blankline = "",
 }
 EOF
-
-lua << EOF
-    vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
-    require("catppuccin").setup({
-        transparent_background = false,
-        term_colors = false,
-        compile = {
-            enabled = true,
-            path = vim.fn.stdpath "cache" .. "/catppuccin",
-        },
-        styles = {
-            comments = { "italic" },
-            conditionals = { "italic" },
-            loops = { "italic" },
-            functions = { "italic" },
-            keywords = { "italic" },
-            strings = { "italic" },
-            variables = { "italic" },
-            numbers = { "italic" },
-            booleans = { "italic" },
-            properties = { "italic" },
-            types = { "italic" },
-            operators = { "italic" },
-        },
-        integrations = {
-            treesitter = true,
-            native_lsp = {
-                enabled = true,
-                virtual_text = {
-                    errors = { "italic" },
-                    hints = { "italic" },
-                    warnings = { "italic" },
-                    information = { "italic" },
-                },
-                underlines = {
-                    errors = { "underline" },
-                    hints = { "underline" },
-                    warnings = { "underline" },
-                    information = { "underline" },
-                },
-            },
-            coc_nvim = false,
-            lsp_trouble = false,
-            cmp = true,
-            lsp_saga = false,
-            gitgutter = true,
-            gitsigns = true,
-            leap = false,
-            telescope = true,
-            nvimtree = {
-                enabled = true,
-                show_root = true,
-                transparent_panel = false,
-            },
-            neotree = {
-                enabled = false,
-                show_root = true,
-                transparent_panel = false,
-            },
-            dap = {
-                enabled = false,
-                enable_ui = false,
-            },
-            which_key = false,
-            indent_blankline = {
-                enabled = true,
-                colored_indent_levels = true,
-            },
-            dashboard = true,
-            neogit = false,
-            vim_sneak = false,
-            fern = false,
-            barbar = false,
-            bufferline = true,
-            markdown = true,
-            lightspeed = false,
-            ts_rainbow = false,
-            hop = false,
-            notify = true,
-            telekasten = true,
-            symbols_outline = true,
-        }
-    })
-    vim.cmd[[colorscheme catppuccin]]
-EOF
+"
+" lua << EOF
+"     vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+"     require("catppuccin").setup({
+"         transparent_background = false,
+"         term_colors = false,
+"         compile = {
+"             enabled = true,
+"             path = vim.fn.stdpath "cache" .. "/catppuccin",
+"         },
+"         styles = {
+"             comments = { "italic" },
+"             conditionals = { "italic" },
+"             loops = { "italic" },
+"             functions = { "italic" },
+"             keywords = { "italic" },
+"             strings = { "italic" },
+"             variables = { "italic" },
+"             numbers = { "italic" },
+"             booleans = { "italic" },
+"             properties = { "italic" },
+"             types = { "italic" },
+"             operators = { "italic" },
+"         },
+"         integrations = {
+"             treesitter = true,
+"             native_lsp = {
+"                 enabled = true,
+"                 virtual_text = {
+"                     errors = { "italic" },
+"                     hints = { "italic" },
+"                     warnings = { "italic" },
+"                     information = { "italic" },
+"                 },
+"                 underlines = {
+"                     errors = { "underline" },
+"                     hints = { "underline" },
+"                     warnings = { "underline" },
+"                     information = { "underline" },
+"                 },
+"             },
+"             coc_nvim = false,
+"             lsp_trouble = false,
+"             cmp = true,
+"             lsp_saga = false,
+"             gitgutter = true,
+"             gitsigns = true,
+"             leap = false,
+"             telescope = true,
+"             nvimtree = {
+"                 enabled = true,
+"                 show_root = true,
+"                 transparent_panel = false,
+"             },
+"             neotree = {
+"                 enabled = false,
+"                 show_root = true,
+"                 transparent_panel = false,
+"             },
+"             dap = {
+"                 enabled = false,
+"                 enable_ui = false,
+"             },
+"             which_key = false,
+"             indent_blankline = {
+"                 enabled = true,
+"                 colored_indent_levels = true,
+"             },
+"             dashboard = true,
+"             neogit = false,
+"             vim_sneak = false,
+"             fern = false,
+"             barbar = false,
+"             bufferline = true,
+"             markdown = true,
+"             lightspeed = false,
+"             ts_rainbow = false,
+"             hop = false,
+"             notify = true,
+"             telekasten = true,
+"             symbols_outline = true,
+"         }
+"     })
+"     vim.cmd[[colorscheme catppuccin]]
+" EOF
 
 
 " Catppuccin
@@ -867,6 +872,30 @@ require("clangd_extensions").setup {
         },
     },
 }
+vim.fn.sign_define(
+    "DiagnosticSignError",
+    { text = " ", texthl = "DiagnosticSignError", linehl = "DiagnosticLineError", numhl = "" }
+)
+vim.fn.sign_define(
+    "DiagnosticSignWarn",
+    { text = " ", texthl = "DiagnosticSignWarn", linehl = "DiagnosticLineWarn", numhl = "" }
+)
+vim.fn.sign_define(
+    "DiagnosticSignWarning",
+    { text = " ", texthl = "DiagnosticSignWarning", linehl = "DiagnosticLineWarning", numhl = "" }
+)
+vim.fn.sign_define(
+    "DiagnosticSignInformation",
+    { text = " ", texthl = "DiagnosticSignInformation", linehl = "DiagnosticLineInformation", numhl = "" }
+)
+vim.fn.sign_define(
+    "DiagnosticSignInfo",
+    { text = " ", texthl = "DiagnosticSignInfo", linehl = "DiagnosticLineInfo", numhl = "" }
+)
+vim.fn.sign_define(
+    "DiagnosticSignHing",
+    { text = " ", texthl = "DiagnosticSignHint", linehl = "DiagnosticLineHint", numhl = "" }
+)
 EOF
 
 lua << EOF
@@ -956,16 +985,17 @@ end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
--- nvim ufo folding
-capabilities.textDocument.foldingRange = {
-    dynamicRegistration = false,
-    lineFoldingOnly = true
-}
-
--- You are now capable!
-capabilities.textDocument.colorProvider = {
-  dynamicRegistration = true
-}
+-- BEING UFO
+-- -- nvim ufo folding
+-- capabilities.textDocument.foldingRange = {
+--     dynamicRegistration = false,
+--     lineFoldingOnly = true
+-- }
+--
+-- -- You are now capable!
+-- capabilities.textDocument.colorProvider = {
+--   dynamicRegistration = true
+-- }
 
 -- Lsp servers that support documentColor
 require("lspconfig").tailwindcss.setup({
@@ -973,79 +1003,80 @@ require("lspconfig").tailwindcss.setup({
   capabilities = capabilities
 })
 
-local ftMap = {
-    vim = 'indent',
-    python = {'indent'},
-    git = ''
-}
-
-local handler = function(virtText, lnum, endLnum, width, truncate)
-    local newVirtText = {}
-    local suffix = ('  %d '):format(endLnum - lnum)
-    local sufWidth = vim.fn.strdisplaywidth(suffix)
-    local targetWidth = width - sufWidth
-    local curWidth = 0
-    for _, chunk in ipairs(virtText) do
-        local chunkText = chunk[1]
-        local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-        if targetWidth > curWidth + chunkWidth then
-            table.insert(newVirtText, chunk)
-        else
-            chunkText = truncate(chunkText, targetWidth - curWidth)
-            local hlGroup = chunk[2]
-            table.insert(newVirtText, {chunkText, hlGroup})
-            chunkWidth = vim.fn.strdisplaywidth(chunkText)
-            -- str width returned from truncate() may less than 2nd argument, need padding
-            if curWidth + chunkWidth < targetWidth then
-                suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-            end
-            break
-        end
-        curWidth = curWidth + chunkWidth
-    end
-    table.insert(newVirtText, {suffix, 'MoreMsg'})
-    return newVirtText
-end
-
-vim.keymap.set('n', 'zK', function()
-    local winid = require('ufo').peekFoldedLinesUnderCursor()
-    if not winid then
-        -- choose one of them
-        -- coc.nvim
-        -- vim.fn.CocActionAsync('definitionHover')
-        -- nvimlsp
-        vim.lsp.buf.hover()
-    end
-end)
-
-require('ufo').setup({
-    fold_virt_text_handler = handler,
-    open_fold_hl_timeout = 100,
-    close_fold_kinds = {'imports', 'comment'},
-    preview = {
-        win_config = {
-            border = {'', '─', '', '', '', '─', '', ''},
-            winhighlight = 'Normal:Folded',
-            winblend = 0
-        },
-        mappings = {
-            scrollU = '<C-u>',
-            scrollD = '<C-d>'
-        }
-    },
-    provider_selector = function(bufnr, filetype, buftype)
-        -- if you prefer treesitter provider rather than lsp,
-        -- return ftMap[filetype] or {'treesitter', 'indent'}
-        -- return ftMap[filetype]
-        return {'treesitter', 'indent'}
-
-        -- refer to ./doc/example.lua for detail
-    end
-})
-
+-- local ftMap = {
+--     vim = 'indent',
+--     python = {'indent'},
+--     git = ''
+-- }
+--
+-- local handler = function(virtText, lnum, endLnum, width, truncate)
+--     local newVirtText = {}
+--     local suffix = ('  %d '):format(endLnum - lnum)
+--     local sufWidth = vim.fn.strdisplaywidth(suffix)
+--     local targetWidth = width - sufWidth
+--     local curWidth = 0
+--     for _, chunk in ipairs(virtText) do
+--         local chunkText = chunk[1]
+--         local chunkWidth = vim.fn.strdisplaywidth(chunkText)
+--         if targetWidth > curWidth + chunkWidth then
+--             table.insert(newVirtText, chunk)
+--         else
+--             chunkText = truncate(chunkText, targetWidth - curWidth)
+--             local hlGroup = chunk[2]
+--             table.insert(newVirtText, {chunkText, hlGroup})
+--             chunkWidth = vim.fn.strdisplaywidth(chunkText)
+--             -- str width returned from truncate() may less than 2nd argument, need padding
+--             if curWidth + chunkWidth < targetWidth then
+--                 suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
+--             end
+--             break
+--         end
+--         curWidth = curWidth + chunkWidth
+--     end
+--     table.insert(newVirtText, {suffix, 'MoreMsg'})
+--     return newVirtText
+-- end
+--
+-- vim.keymap.set('n', 'zK', function()
+--     local winid = require('ufo').peekFoldedLinesUnderCursor()
+--     if not winid then
+--         -- choose one of them
+--         -- coc.nvim
+--         -- vim.fn.CocActionAsync('definitionHover')
+--         -- nvimlsp
+--         vim.lsp.buf.hover()
+--     end
+-- end)
+--
+-- require('ufo').setup({
+--     fold_virt_text_handler = handler,
+--     open_fold_hl_timeout = 100,
+--     close_fold_kinds = {'imports', 'comment'},
+--     preview = {
+--         win_config = {
+--             border = {'', '─', '', '', '', '─', '', ''},
+--             winhighlight = 'Normal:Folded',
+--             winblend = 0
+--         },
+--         mappings = {
+--             scrollU = '<C-u>',
+--             scrollD = '<C-d>'
+--         }
+--     },
+--     provider_selector = function(bufnr, filetype, buftype)
+--         -- if you prefer treesitter provider rather than lsp,
+--         -- return ftMap[filetype] or {'treesitter', 'indent'}
+--         -- return ftMap[filetype]
+--         return {'treesitter', 'indent'}
+--
+--         -- refer to ./doc/example.lua for detail
+--     end
+-- })
+--
 -- local coq = require"coq"
+-- END UFO
 
-local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd', 'jdtls', 'svelte-language-server' }
+local servers = { 'pyright', 'tsserver', 'gopls', 'clangd', 'volar', 'tailwindcss', 'clangd', 'jdtls' }
 
 for _, lsp in pairs(servers) do
     require('lspconfig')[lsp].setup({
@@ -1100,7 +1131,7 @@ local theme = {
   tail = 'TabLine',
 }
 local tabby_config = function()
-  local palette = palettes.nord
+  local palette = palettes.gruvbox_light
   local filename = require('tabby.filename')
   local cwd = function()
     return ' ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' '
@@ -1617,6 +1648,8 @@ set expandtab
 " Enabling this will make the tab key (in insert mode) insert spaces or tabs to go to the next indent of the next tabstop when the cursor is at the beginning of a line (i.e. the only preceding characters are whitespace).
 set smarttab
 set shiftwidth=4
+
+nnoremap <silent> <C-p> :lua require("notify").dismiss() <CR>
 
 " auto update plugged every week
 function! OnVimEnter() abort

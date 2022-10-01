@@ -27,15 +27,15 @@ pre > code {
 /** End Iosevka */
 
 .theme-dark {
-    --background-primary: #27282d;
-    --background-secondary: #27282d;
-    --background-tertiary: #27282d;
+    --background-primary: #0f101a;
+    --background-secondary: #0f101a;
+    --background-tertiary: #0f101a;
     --background-accent: #6b7d88;
     --text-normal: #c9d2e4;
     --text-spotify: #c6d6f7;
     --text-muted: #9abada;
     --text-link: #97c9c7;
-    --background-floating: #27282d;
+    --background-floating: #0f101a;
     --header-primary: #c9d2e4;
     --header-secondary: #9abada;
     --header-spotify: #8ec07c;
