@@ -43,7 +43,7 @@ Plug 'ntpeters/vim-better-whitespace'
 Plug 'petertriho/nvim-scrollbar'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-" Plug 'xiyaowong/nvim-transparent'
+Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
@@ -66,9 +66,10 @@ call plug#end()
 set mouse=a
 
 let g:gruvbox_italic=1
-let g:gruvbox_contrast_light="hard"
+" let g:gruvbox_contrast_light="hard"
+let g:gruvbox_contrast_dark="hard"
 autocmd vimenter * ++nested colorscheme gruvbox
-set background=light   " Setting light mode
+set background=dark " Setting light mode
 " colorscheme github_light_default
 
 " this variable must be enabled for colors to be applied properly
@@ -577,9 +578,9 @@ require("notify").setup({
 
 vim.notify = require("notify")
 
--- require("transparent").setup({
---   enable = true, -- boolean: enable transparent
--- })
+require("transparent").setup({
+  enable = true, -- boolean: enable transparent
+})
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 
