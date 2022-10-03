@@ -1097,12 +1097,12 @@ local palettes = {
     fg_sec = '#665c54', -- fg3
   },
   gruvbox_dark = {
-    accent = '#d65d0e', -- orange
+    accent = '#be5e67', -- orange
     accent_sec = '#a89984', -- fg4
-    bg = '#3c3836', -- bg1
-    bg_sec = '#504945', -- bg2
-    fg = '#d5c4a1', -- fg2
-    fg_sec = '#bdae93', -- fg3
+    bg = '#0f101a', -- bg1
+    bg_sec = '#3b4252', -- bg2
+    fg = '#e5e9f0', -- fg2
+    fg_sec = '#d8dee9', -- fg3
   },
   edge_light = {
     accent = '#bf75d6', -- bg_purple
@@ -1132,7 +1132,7 @@ local theme = {
   tail = 'TabLine',
 }
 local tabby_config = function()
-  local palette = palettes.gruvbox_light
+  local palette = palettes.gruvbox_dark
   local filename = require('tabby.filename')
   local cwd = function()
     return ' ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' '
