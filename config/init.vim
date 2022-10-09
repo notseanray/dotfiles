@@ -53,10 +53,11 @@ Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'p00f/clangd_extensions.nvim'
 Plug 'norcalli/nvim-colorizer.lua'
-Plug 'mrshmllow/document-color.nvim'
 Plug 'sindrets/winshift.nvim'
 Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
+Plug 'folke/which-key.nvim'
+Plug 'brenoprata10/nvim-highlight-colors'
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 Plug 'projekt0n/github-nvim-theme'
@@ -74,6 +75,17 @@ set background=dark " Setting light mode
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
+
+" nvim highlight colors
+set t_Co=256
+
+lua << EOF
+require("nvim-highlight-colors").setup {
+	render = 'background', -- or 'foreground' or 'first_column'
+	enable_named_colors = true,
+	enable_tailwind = true,
+}
+EOF
 
 " setlocal spelloptions+=noplainbuffer
 
@@ -176,6 +188,80 @@ set showtabline=1
 " colorscheme one
 " colorscheme one
 " set background=dark
+
+lua << EOF
+  require("which-key").setup {
+      plugins = {
+    marks = true, -- shows a list of your marks on ' and `
+    registers = true, -- shows your registers on " in NORMAL or <C-r> in INSERT mode
+    spelling = {
+      enabled = false, -- enabling this will show WhichKey when pressing z= to select spelling suggestions
+      suggestions = 20, -- how many suggestions should be shown in the list?
+    },
+    -- the presets plugin, adds help for a bunch of default keybindings in Neovim
+    -- No actual key bindings are created
+    presets = {
+      operators = true, -- adds help for operators like d, y, ... and registers them for motion / text object completion
+      motions = true, -- adds help for motions
+      text_objects = true, -- help for text objects triggered after entering an operator
+      windows = true, -- default bindings on <c-w>
+      nav = true, -- misc bindings to work with windows
+      z = true, -- bindings for folds, spelling and others prefixed with z
+      g = true, -- bindings for prefixed with g
+    },
+  },
+  -- add operators that will trigger motion and text object completion
+  -- to enable all native operators, set the preset / operators plugin above
+  operators = { gc = "Comments" },
+  key_labels = {
+    -- override the label used to display some keys. It doesn't effect WK in any other way.
+    -- For example:
+    -- ["<space>"] = "SPC",
+    -- ["<cr>"] = "RET",
+    -- ["<tab>"] = "TAB",
+  },
+  icons = {
+    breadcrumb = "»", -- symbol used in the command line area that shows your active key combo
+    separator = "➜", -- symbol used between a key and it's label
+    group = "+", -- symbol prepended to a group
+  },
+  popup_mappings = {
+    scroll_down = '<c-d>', -- binding to scroll down inside the popup
+    scroll_up = '<c-u>', -- binding to scroll up inside the popup
+  },
+  window = {
+    border = "none", -- none, single, double, shadow
+    position = "top", -- bottom, top
+    margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]
+    padding = { 2, 2, 2, 2 }, -- extra window padding [top, right, bottom, left]
+    winblend = 20
+  },
+  layout = {
+    height = { min = 4, max = 25 }, -- min and max height of the columns
+    width = { min = 20, max = 50 }, -- min and max width of the columns
+    spacing = 3, -- spacing between columns
+    align = "left", -- align columns left, center or right
+  },
+  ignore_missing = false, -- enable this to hide mappings for which you didn't specify a label
+  hidden = { "<silent>", "<cmd>", "<Cmd>", "<CR>", "call", "lua", "^:", "^ "}, -- hide mapping boilerplate
+  show_help = true, -- show help message on the command line when the popup is visible
+  triggers = "auto", -- automatically setup triggers
+  -- triggers = {"<leader>"} -- or specify a list manually
+  triggers_blacklist = {
+    -- list of mode / prefixes that should never be hooked by WhichKey
+    -- this is mostly relevant for key maps that start with a native binding
+    -- most people should not need to change this
+    i = { "j", "k" },
+    v = { "j", "k" },
+  },
+  -- disable the WhichKey popup for certain buf types and file types.
+  -- Disabled by deafult for Telescope
+  disable = {
+    buftypes = {},
+    filetypes = { "TelescopePrompt" },
+  },
+  }
+EOF
 
 lua << EOF
 local augend = require("dial.augend")
@@ -972,17 +1058,17 @@ local opts = {
     },
 }
 
-require("document-color").setup {
-    -- Default options
-    mode = "background", -- "background" | "foreground" | "single"
-}
-
-local on_attach = function(client)
-  if client.server_capabilities.colorProvider then
-    -- Attach document colour support
-    require("document-color").buf_attach(bufnr)
-  end
-end
+-- require("document-color").setup {
+--     -- Default options
+--     mode = "background", -- "background" | "foreground" | "single"
+-- }
+--
+-- local on_attach = function(client)
+--   if client.server_capabilities.colorProvider then
+--     -- Attach document colour support
+--     require("document-color").buf_attach(bufnr)
+--   end
+-- end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 
@@ -1097,12 +1183,12 @@ local palettes = {
     fg_sec = '#665c54', -- fg3
   },
   gruvbox_dark = {
-    accent = '#d65d0e', -- orange
+    accent = '#be5e67', -- orange
     accent_sec = '#a89984', -- fg4
-    bg = '#3c3836', -- bg1
-    bg_sec = '#504945', -- bg2
-    fg = '#d5c4a1', -- fg2
-    fg_sec = '#bdae93', -- fg3
+    bg = '#0f101a', -- bg1
+    bg_sec = '#3b4252', -- bg2
+    fg = '#e5e9f0', -- fg2
+    fg_sec = '#d8dee9', -- fg3
   },
   edge_light = {
     accent = '#bf75d6', -- bg_purple
@@ -1132,7 +1218,7 @@ local theme = {
   tail = 'TabLine',
 }
 local tabby_config = function()
-  local palette = palettes.gruvbox_light
+  local palette = palettes.gruvbox_dark
   local filename = require('tabby.filename')
   local cwd = function()
     return ' ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' '
@@ -1668,6 +1754,7 @@ function! OnVimEnter() abort
       call writefile([l:this_week], l:filename, 'a')
     endif
   endif
+  lua require("notify").dismiss()
 endfunction
 
 autocmd VimEnter * call OnVimEnter()
