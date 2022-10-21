@@ -48,6 +48,8 @@ Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
 Plug 'jbyuki/venn.nvim'
+Plug 'MunifTanjim/nui.nvim'
+Plug 'folke/noice.nvim'
 Plug 'notseanray/presence.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -58,11 +60,14 @@ Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
 Plug 'folke/which-key.nvim'
 Plug 'brenoprata10/nvim-highlight-colors'
+Plug 'phelipetls/jsonpath.nvim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 Plug 'projekt0n/github-nvim-theme'
 Plug 'morhetz/gruvbox'
 call plug#end()
+
 
 set mouse=a
 
@@ -188,6 +193,115 @@ set showtabline=1
 " colorscheme one
 " colorscheme one
 " set background=dark
+
+
+lua << EOF
+require("notify").setup({
+    relative = "editor",
+    anchor = "NE",
+    width = 50,
+    height = 10,
+    background_colour = "#c9d2e4",
+    render = "minimal",
+})
+local noice_config = {
+  cmdline = {
+    enabled = true, -- enables the Noice cmdline UI
+    view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
+    opts = { buf_options = { filetype = "vim" } }, -- enable syntax highlighting in the cmdline
+    ---@type table<string, CmdlineFormat>
+    format = {
+      -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
+      -- view: (default is cmdline view)
+      -- opts: any options passed to the view
+      -- icon_hl_group: optional hl_group for the icon
+      cmdline = { pattern = "^:", icon = "λ" },
+      search = { pattern = "^[?/]", icon = " ", conceal = false },
+      filter = { pattern = "^:%s*!", icon = "$", opts = { buf_options = { filetype = "sh" } } },
+      lua = { pattern = "^:%s*lua%s+", icon = "", opts = { buf_options = { filetype = "lua" } } },
+      -- lua = false, -- to disable a format, set to `false`
+    },
+  },
+  messages = {
+    -- NOTE: If you enable messages, then the cmdline is enabled automatically.
+    -- This is a current Neovim limitation.
+    enabled = true, -- enables the Noice messages UI
+    view = "notify", -- default view for messages
+    view_error = "notify", -- view for errors
+    view_warn = "notify", -- view for warnings
+    view_history = "split", -- view for :messages
+    view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
+  },
+  popupmenu = {
+    enabled = true, -- enables the Noice popupmenu UI
+    ---@type 'nui'|'cmp'
+    backend = "nui", -- backend to use to show regular cmdline completions
+  },
+  ---@type NoiceRouteConfig
+  history = {
+    -- options for the message history that you get with `:Noice`
+    view = "split",
+    opts = { enter = true, format = "details" },
+    filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+  },
+  notify = {
+    -- Noice can be used as `vim.notify` so you can route any notification like other messages
+    -- Notification messages have their level and other properties set.
+    -- event is always "notify" and kind can be any log level as a string
+    -- The default routes will forward notifications to nvim-notify
+    -- Benefit of using Noice for this is the routing and consistent history view
+    enabled = true,
+    view = "notify",
+  },
+  lsp_progress = {
+    enabled = false,
+    -- Lsp Progress is formatted using the builtins for lsp_progress. See config.format.builtin
+    -- See the section on formatting for more details on how to customize.
+    --- @type NoiceFormat|string
+    format = "lsp_progress",
+    --- @type NoiceFormat|string
+    format_done = "lsp_progress_done",
+    throttle = 1000 / 30, -- frequency to update lsp progress message
+    view = "mini",
+  },
+  throttle = 1000 / 30, -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
+  ---@type NoiceConfigViews
+  views = {
+          cmdline_popup = {
+            position = {
+              row = 2,
+              col = "50%",
+            },
+          },
+          popupmenu = {
+            relative = "editor",
+            position = {
+              row = 5,
+              col = "50%",
+            },
+            size = {
+              width = 60,
+              height = 10,
+            },
+            border = {
+              style = "rounded",
+              padding = { 0, 1 },
+            },
+            win_options = {
+              winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
+            },
+          },
+      }, ---@see section on views
+  ---@type NoiceRouteConfig[]
+  routes = {}, --- @see section on routes
+  ---@type table<string, NoiceFilter>
+  status = {}, --- @see section on statusline components
+  ---@type NoiceFormatOptions
+  format = {}, --- @see section on formatting
+}
+
+require("noice").setup(noice_config)
+EOF
 
 lua << EOF
   require("which-key").setup {
@@ -653,17 +767,6 @@ set completeopt=menuone,noinsert,noselect
 autocmd BufWritePost init.vim :CatppuccinCompile
 
 lua << EOF
-require("notify").setup({
-    relative = "editor",
-    anchor = "NE",
-    width = 50,
-    height = 10,
-    background_colour = "#c9d2e4",
-    render = "minimal",
-})
-
-vim.notify = require("notify")
-
 require("transparent").setup({
   enable = true, -- boolean: enable transparent
 })
@@ -1765,3 +1868,24 @@ if has ('autocmd') && execute("file") != ".config/nvim/init.vim" " Remain compat
     autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
   augroup END
 endif " has autocmd
+
+let s:json_path_ns=luaeval("vim.api.nvim_create_namespace('json_path')")
+
+function! s:show_json_path()
+    let l:line_len=col('$')
+    if l:line_len > 1000
+        return
+    endif
+    let l:current_line=line('.')-1
+    let l:json_path=luaeval('require"jsonpath".get()')
+    let l:bufnr=bufnr('%')
+    if exists('*nvim_buf_set_extmark')
+        call nvim_buf_clear_namespace(l:bufnr, s:json_path_ns, 0, -1)
+        call nvim_buf_set_extmark(l:bufnr, s:json_path_ns, l:current_line, 0, {"hl_group": "Comment", "hl_mode": "replace", "virt_text": [[l:json_path, 'json_path']], "virt_text_pos": "eol"})
+    endif
+endfunction
+
+augroup json_path
+    au!
+    autocmd BufEnter,BufWritePost,CursorMoved *.json :call s:show_json_path()
+augroup END
