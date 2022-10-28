@@ -15,12 +15,12 @@ Plug 'williamboman/mason.nvim'
 Plug 'williamboman/mason-lspconfig.nvim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
-Plug 'simrat39/rust-tools.nvim'
 Plug 'hrsh7th/vim-vsnip'
+Plug 'simrat39/rust-tools.nvim'
 Plug 'kyazdani42/nvim-web-devicons' " If you want devicons
 Plug 'glepnir/galaxyline.nvim'
 Plug 'notseanray/nerd-galaxyline'
@@ -31,7 +31,6 @@ Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'kylechui/nvim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'monaqa/dial.nvim'
 Plug 'kyazdani42/nvim-tree.lua', { 'on': 'NvimTreeToggle' }
 Plug 'ryanoasis/vim-devicons', { 'on': 'NvimTreeToggle' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
@@ -47,7 +46,7 @@ Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
-Plug 'jbyuki/venn.nvim'
+" Plug 'jbyuki/venn.nvim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'folke/noice.nvim'
 Plug 'notseanray/presence.nvim'
@@ -62,18 +61,53 @@ Plug 'folke/which-key.nvim'
 Plug 'brenoprata10/nvim-highlight-colors'
 Plug 'phelipetls/jsonpath.nvim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
+Plug 'jedrzejboczar/possession.nvim'
+Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
 
 Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 Plug 'projekt0n/github-nvim-theme'
 Plug 'morhetz/gruvbox'
+Plug 'p00f/nvim-ts-rainbow'
 call plug#end()
-
 
 set mouse=a
 
+" rainbow parens
+let g:rainbow_active = 1
+
+" easy search/replace with current visual selection
+" xnoremap ;s y:%s/<C-r>"//g<Left><Left>
+
+" easy search/replace on current line with visual selection
+" xnoremap ;ls y:.s/<C-r>"//g<Left><Left>
+
+" set tabs to n amount of spaces
+function! SetTab(n)
+  let &tabstop=a:n
+  let &shiftwidth=a:n
+  let &softtabstop=a:n
+  set expandtab
+  set autoindent
+  set smartindent
+endfunction
+
+command! -nargs=1 SetTab call SetTab(<f-args>)
+
+" Binary files -> xxd
+augroup Binary
+  au!
+  au BufReadPre  *.bin let &bin=1
+  au BufReadPost *.bin if &bin | %!xxd
+  au BufReadPost *.bin set ft=xxd | endif
+  au BufWritePre *.bin if &bin | %!xxd -r
+  au BufWritePre *.bin endif
+  au BufWritePost *.bin if &bin | %!xxd
+  au BufWritePost *.bin set nomod | endif
+augroup END
+
 let g:gruvbox_italic=1
 " let g:gruvbox_contrast_light="hard"
-let g:gruvbox_contrast_dark="hard"
+let g:gruvbox_contrast_dark="medium"
 autocmd vimenter * ++nested colorscheme gruvbox
 set background=dark " Setting light mode
 " colorscheme github_light_default
@@ -89,6 +123,17 @@ require("nvim-highlight-colors").setup {
 	render = 'background', -- or 'foreground' or 'first_column'
 	enable_named_colors = true,
 	enable_tailwind = true,
+}
+EOF
+
+lua << EOF
+require('possession').setup {
+    commands = {
+        save = 'SSave',
+        load = 'SLoad',
+        delete = 'SDelete',
+        list = 'SList',
+    }
 }
 EOF
 
@@ -194,6 +239,30 @@ set showtabline=1
 " colorscheme one
 " set background=dark
 
+lua << EOF
+local theme = {
+  -- The following keys are all optional
+  -- with default values
+  font = 'Hack=20',
+  theme = 'Dracula',
+  background = '#eff',
+  shadow = {
+    blur_radius = 0.0,
+    offset_x = 0,
+    offset_y = 0,
+    color = '#555'
+  },
+  pad_horiz = 100,
+  pad_vert = 80,
+  line_number = false,
+  line_pad = 2,
+  line_offset = 1,
+  tab_width = 4,
+  round_corner = true,
+  window_controls = true,
+}
+require('silicon').setup(theme)
+EOF
 
 lua << EOF
 require("notify").setup({
@@ -378,22 +447,22 @@ lua << EOF
 EOF
 
 lua << EOF
-local augend = require("dial.augend")
-require("dial.config").augends:register_group{
-  -- default augends used when no group name is specified
-  default = {
-    augend.integer.alias.decimal,   -- nonnegative decimal number (0, 1, 2, 3, ...)
-    augend.integer.alias.hex,       -- nonnegative hex number  (0x01, 0x1a1f, etc.)
-    augend.date.alias["%Y/%m/%d"],  -- date (2022/02/19, etc.)
-  },
-
-  -- augends used when group with name `mygroup` is specified
-  mygroup = {
-    augend.integer.alias.decimal,
-    augend.constant.alias.bool,    -- boolean value (true <-> false)
-    augend.date.alias["%m/%d/%Y"], -- date (02/19/2022, etc.)
-  }
-}
+-- local augend = require("dial.augend")
+-- require("dial.config").augends:register_group{
+--   -- default augends used when no group name is specified
+--   default = {
+--     augend.integer.alias.decimal,   -- nonnegative decimal number (0, 1, 2, 3, ...)
+--     augend.integer.alias.hex,       -- nonnegative hex number  (0x01, 0x1a1f, etc.)
+--     augend.date.alias["%Y/%m/%d"],  -- date (2022/02/19, etc.)
+--   },
+--
+--   -- augends used when group with name `mygroup` is specified
+--   mygroup = {
+--     augend.integer.alias.decimal,
+--     augend.constant.alias.bool,    -- boolean value (true <-> false)
+--     augend.date.alias["%m/%d/%Y"], -- date (02/19/2022, etc.)
+--   }
+-- }
 
 local ccc = require("ccc")
 local mapping = ccc.mapping
@@ -712,29 +781,29 @@ require('gitsigns').setup {
 }
 EOF
 
-lua << EOF
--- venn.nvim: enable or disable keymappings
-function _G.Toggle_venn()
-    local venn_enabled = vim.inspect(vim.b.venn_enabled)
-    if venn_enabled == "nil" then
-        vim.b.venn_enabled = true
-        vim.cmd[[setlocal ve=all]]
-        -- draw a line on HJKL keystokes
-        vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
-        vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
-        -- draw a box by pressing "f" with visual selection
-        vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
-    else
-        vim.cmd[[setlocal ve=]]
-        vim.cmd[[mapclear <buffer>]]
-        vim.b.venn_enabled = nil
-    end
-end
--- toggle keymappings for venn using <leader>v
-vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true})
-EOF
+" lua << EOF
+" -- venn.nvim: enable or disable keymappings
+" function _G.Toggle_venn()
+"     local venn_enabled = vim.inspect(vim.b.venn_enabled)
+"     if venn_enabled == "nil" then
+"         vim.b.venn_enabled = true
+"         vim.cmd[[setlocal ve=all]]
+"         -- draw a line on HJKL keystokes
+"         vim.api.nvim_buf_set_keymap(0, "n", "J", "<C-v>j:VBox<CR>", {noremap = true})
+"         vim.api.nvim_buf_set_keymap(0, "n", "K", "<C-v>k:VBox<CR>", {noremap = true})
+"         vim.api.nvim_buf_set_keymap(0, "n", "L", "<C-v>l:VBox<CR>", {noremap = true})
+"         vim.api.nvim_buf_set_keymap(0, "n", "H", "<C-v>h:VBox<CR>", {noremap = true})
+"         -- draw a box by pressing "f" with visual selection
+"         vim.api.nvim_buf_set_keymap(0, "v", "f", ":VBox<CR>", {noremap = true})
+"     else
+"         vim.cmd[[setlocal ve=]]
+"         vim.cmd[[mapclear <buffer>]]
+"         vim.b.venn_enabled = nil
+"     end
+" end
+" -- toggle keymappings for venn using <leader>v
+" vim.api.nvim_set_keymap('n', '<leader>v', ":lua Toggle_venn()<CR>", { noremap = true})
+" EOF
 
 let g:coq_settings = ({'display.icons.mode': 'none', 'keymap.jump_to_mark': '<C-i>', 'auto_start': v:false})
 
@@ -873,8 +942,17 @@ require('nvim-autopairs').setup({
   enable_check_bracket_line = false
 })
 require'nvim-treesitter.configs'.setup {
+    rainbow = {
+        enable = true,
+        -- disable = { "jsx", "cpp" }, list of languages you want to disable the plugin for
+        extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+        max_file_lines = nil, -- Do not enable for files with more than n lines, int
+        -- colors = {}, -- table of hex strings
+        -- termcolors = {} -- table of colour name strings
+      },
   -- A list of parser names, or "all"
-  ensure_installed = { "c", "lua", "rust" },
+  ensure_installed = { "rust", "lua", "c" },
+  ignore_install = { "regex" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
   sync_install = false,
@@ -1105,6 +1183,7 @@ require('telescope').setup {
 -- To get fzf loaded and working with telescope, you need to call
 -- load_extension, somewhere after setup function:
 require('telescope').load_extension('fzf')
+require('telescope').load_extension('possession')
 
 local nvim_lsp = require'lspconfig'
 
@@ -1607,10 +1686,12 @@ nnoremap <silent> <leader>fg <cmd>Telescope live_grep<CR>
 nnoremap <silent> <leader>fw <cmd>Telescope live_grep<CR>
 nnoremap <silent> <leader>fb <cmd>Telescope buffers<CR>
 nnoremap <silent> <leader>fh <cmd>Telescope help_tags<CR>
+nnoremap <silent> <leader>fs <cmd>Telescope possession list<CR>
 
 " search buffers with fzf
 nnoremap <silent> <C-b>Telescope buffers<CR>
 nnoremap <silent> <C-f>Telescope live_grep<CR>
+
 
 " General options
 let g:presence_auto_update         = 1
@@ -1746,7 +1827,7 @@ if has("nvim-0.5.0") || has("patch-8.1.1564")
 else
   set signcolumn=yes
 endif
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
   let col = col('.') - 1
