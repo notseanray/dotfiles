@@ -46,7 +46,8 @@ Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
-" Plug 'jbyuki/venn.nvim'
+Plug 'tpope/vim-repeat'
+Plug 'ggandor/leap.nvim'
 Plug 'MunifTanjim/nui.nvim'
 Plug 'folke/noice.nvim'
 Plug 'notseanray/presence.nvim'
@@ -124,6 +125,10 @@ require("nvim-highlight-colors").setup {
 	enable_named_colors = true,
 	enable_tailwind = true,
 }
+
+require('leap').add_default_mappings()
+vim.keymap.del({'x', 'o'}, 'x')
+vim.keymap.del({'x', 'o'}, 'X')
 EOF
 
 lua << EOF
