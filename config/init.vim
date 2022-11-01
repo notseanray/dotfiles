@@ -39,7 +39,6 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'ntpeters/vim-better-whitespace'
-Plug 'petertriho/nvim-scrollbar'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'xiyaowong/nvim-transparent'
@@ -48,8 +47,7 @@ Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
 Plug 'tpope/vim-repeat'
 Plug 'ggandor/leap.nvim'
-Plug 'MunifTanjim/nui.nvim'
-Plug 'folke/noice.nvim'
+Plug 'ggandor/leap-spooky.nvim'
 Plug 'notseanray/presence.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -65,8 +63,8 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 Plug 'jedrzejboczar/possession.nvim'
 Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
 
-Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
-Plug 'projekt0n/github-nvim-theme'
+" Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
+" Plug 'projekt0n/github-nvim-theme'
 Plug 'morhetz/gruvbox'
 Plug 'p00f/nvim-ts-rainbow'
 call plug#end()
@@ -139,6 +137,22 @@ require('possession').setup {
         delete = 'SDelete',
         list = 'SList',
     }
+}
+require('leap-spooky').setup {
+  affixes = {
+    -- These will generate mappings for all native text objects, like:
+    -- (ir|ar|iR|aR|im|am|iM|aM){obj}.
+    -- Special line objects will also be added, by repeating the affixes.
+    -- E.g. `yrr<leap>` and `ymm<leap>` will yank a line in the current
+    -- window.
+    -- You can also use 'rest' & 'move' as mnemonics.
+    remote   = { window = 'r', cross_window = 'R' },
+    magnetic = { window = 'm', cross_window = 'M' },
+  },
+  -- If this option is set to true, the yanked text will automatically be pasted
+  -- at the cursor position if the unnamed register is in use (and the object is
+  -- "non-magnetic").
+  yank_paste = false,
 }
 EOF
 
@@ -278,103 +292,103 @@ require("notify").setup({
     background_colour = "#c9d2e4",
     render = "minimal",
 })
-local noice_config = {
-  cmdline = {
-    enabled = true, -- enables the Noice cmdline UI
-    view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
-    opts = { buf_options = { filetype = "vim" } }, -- enable syntax highlighting in the cmdline
-    ---@type table<string, CmdlineFormat>
-    format = {
-      -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
-      -- view: (default is cmdline view)
-      -- opts: any options passed to the view
-      -- icon_hl_group: optional hl_group for the icon
-      cmdline = { pattern = "^:", icon = "λ" },
-      search = { pattern = "^[?/]", icon = " ", conceal = false },
-      filter = { pattern = "^:%s*!", icon = "$", opts = { buf_options = { filetype = "sh" } } },
-      lua = { pattern = "^:%s*lua%s+", icon = "", opts = { buf_options = { filetype = "lua" } } },
-      -- lua = false, -- to disable a format, set to `false`
-    },
-  },
-  messages = {
-    -- NOTE: If you enable messages, then the cmdline is enabled automatically.
-    -- This is a current Neovim limitation.
-    enabled = true, -- enables the Noice messages UI
-    view = "notify", -- default view for messages
-    view_error = "notify", -- view for errors
-    view_warn = "notify", -- view for warnings
-    view_history = "split", -- view for :messages
-    view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
-  },
-  popupmenu = {
-    enabled = true, -- enables the Noice popupmenu UI
-    ---@type 'nui'|'cmp'
-    backend = "nui", -- backend to use to show regular cmdline completions
-  },
-  ---@type NoiceRouteConfig
-  history = {
-    -- options for the message history that you get with `:Noice`
-    view = "split",
-    opts = { enter = true, format = "details" },
-    filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
-  },
-  notify = {
-    -- Noice can be used as `vim.notify` so you can route any notification like other messages
-    -- Notification messages have their level and other properties set.
-    -- event is always "notify" and kind can be any log level as a string
-    -- The default routes will forward notifications to nvim-notify
-    -- Benefit of using Noice for this is the routing and consistent history view
-    enabled = true,
-    view = "notify",
-  },
-  lsp_progress = {
-    enabled = false,
-    -- Lsp Progress is formatted using the builtins for lsp_progress. See config.format.builtin
-    -- See the section on formatting for more details on how to customize.
-    --- @type NoiceFormat|string
-    format = "lsp_progress",
-    --- @type NoiceFormat|string
-    format_done = "lsp_progress_done",
-    throttle = 1000 / 30, -- frequency to update lsp progress message
-    view = "mini",
-  },
-  throttle = 1000 / 30, -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
-  ---@type NoiceConfigViews
-  views = {
-          cmdline_popup = {
-            position = {
-              row = 2,
-              col = "50%",
-            },
-          },
-          popupmenu = {
-            relative = "editor",
-            position = {
-              row = 5,
-              col = "50%",
-            },
-            size = {
-              width = 60,
-              height = 10,
-            },
-            border = {
-              style = "rounded",
-              padding = { 0, 1 },
-            },
-            win_options = {
-              winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
-            },
-          },
-      }, ---@see section on views
-  ---@type NoiceRouteConfig[]
-  routes = {}, --- @see section on routes
-  ---@type table<string, NoiceFilter>
-  status = {}, --- @see section on statusline components
-  ---@type NoiceFormatOptions
-  format = {}, --- @see section on formatting
-}
-
-require("noice").setup(noice_config)
+-- local noice_config = {
+--   cmdline = {
+--     enabled = true, -- enables the Noice cmdline UI
+--     view = "cmdline_popup", -- view for rendering the cmdline. Change to `cmdline` to get a classic cmdline at the bottom
+--     opts = { buf_options = { filetype = "vim" } }, -- enable syntax highlighting in the cmdline
+--     ---@type table<string, CmdlineFormat>
+--     format = {
+--       -- conceal: (default=true) This will hide the text in the cmdline that matches the pattern.
+--       -- view: (default is cmdline view)
+--       -- opts: any options passed to the view
+--       -- icon_hl_group: optional hl_group for the icon
+--       cmdline = { pattern = "^:", icon = "λ" },
+--       search = { pattern = "^[?/]", icon = " ", conceal = false },
+--       filter = { pattern = "^:%s*!", icon = "$", opts = { buf_options = { filetype = "sh" } } },
+--       lua = { pattern = "^:%s*lua%s+", icon = "", opts = { buf_options = { filetype = "lua" } } },
+--       -- lua = false, -- to disable a format, set to `false`
+--     },
+--   },
+--   messages = {
+--     -- NOTE: If you enable messages, then the cmdline is enabled automatically.
+--     -- This is a current Neovim limitation.
+--     enabled = true, -- enables the Noice messages UI
+--     view = "notify", -- default view for messages
+--     view_error = "notify", -- view for errors
+--     view_warn = "notify", -- view for warnings
+--     view_history = "split", -- view for :messages
+--     view_search = "virtualtext", -- view for search count messages. Set to `false` to disable
+--   },
+--   popupmenu = {
+--     enabled = true, -- enables the Noice popupmenu UI
+--     ---@type 'nui'|'cmp'
+--     backend = "nui", -- backend to use to show regular cmdline completions
+--   },
+--   ---@type NoiceRouteConfig
+--   history = {
+--     -- options for the message history that you get with `:Noice`
+--     view = "split",
+--     opts = { enter = true, format = "details" },
+--     filter = { event = { "msg_show", "notify" }, ["not"] = { kind = { "search_count", "echo" } } },
+--   },
+--   notify = {
+--     -- Noice can be used as `vim.notify` so you can route any notification like other messages
+--     -- Notification messages have their level and other properties set.
+--     -- event is always "notify" and kind can be any log level as a string
+--     -- The default routes will forward notifications to nvim-notify
+--     -- Benefit of using Noice for this is the routing and consistent history view
+--     enabled = true,
+--     view = "notify",
+--   },
+--   lsp_progress = {
+--     enabled = false,
+--     -- Lsp Progress is formatted using the builtins for lsp_progress. See config.format.builtin
+--     -- See the section on formatting for more details on how to customize.
+--     --- @type NoiceFormat|string
+--     format = "lsp_progress",
+--     --- @type NoiceFormat|string
+--     format_done = "lsp_progress_done",
+--     throttle = 1000 / 30, -- frequency to update lsp progress message
+--     view = "mini",
+--   },
+--   throttle = 1000 / 30, -- how frequently does Noice need to check for ui updates? This has no effect when in blocking mode.
+--   ---@type NoiceConfigViews
+--   views = {
+--           cmdline_popup = {
+--             position = {
+--               row = 2,
+--               col = "50%",
+--             },
+--           },
+--           popupmenu = {
+--             relative = "editor",
+--             position = {
+--               row = 5,
+--               col = "50%",
+--             },
+--             size = {
+--               width = 60,
+--               height = 10,
+--             },
+--             border = {
+--               style = "rounded",
+--               padding = { 0, 1 },
+--             },
+--             win_options = {
+--               winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
+--             },
+--           },
+--       }, ---@see section on views
+--   ---@type NoiceRouteConfig[]
+--   routes = {}, --- @see section on routes
+--   ---@type table<string, NoiceFilter>
+--   status = {}, --- @see section on statusline components
+--   ---@type NoiceFormatOptions
+--   format = {}, --- @see section on formatting
+-- }
+--
+-- require("noice").setup(noice_config)
 EOF
 
 lua << EOF
@@ -985,93 +999,94 @@ require'nvim-treesitter.configs'.setup {
 EOF
 
 lua << EOF
-require("scrollbar").setup({
-    show = true,
-    show_in_active_only = false,
-    set_highlights = true,
-    folds = 500, -- handle folds, set to number to disable folds if no. of lines in buffer exceeds this
-    max_lines = false, -- disables if no. of lines in buffer exceeds this
-    handle = {
-        text = " ",
-        color = nil,
-        cterm = nil,
-        highlight = "CursorColumn",
-        hide_if_all_visible = true, -- Hides handle if all lines are visible
-    },
-    marks = {
-        Search = {
-            text = { "-", "=" },
-            priority = 0,
-            color = nil,
-            cterm = nil,
-            highlight = "Search",
-        },
-        Error = {
-            text = { "-", "=" },
-            priority = 1,
-            color = nil,
-            cterm = nil,
-            highlight = "DiagnosticVirtualTextError",
-        },
-        Warn = {
-            text = { "-", "=" },
-            priority = 2,
-            color = nil,
-            cterm = nil,
-            highlight = "DiagnosticVirtualTextWarn",
-        },
-        Info = {
-            text = { "-", "=" },
-            priority = 3,
-            color = nil,
-            cterm = nil,
-            highlight = "DiagnosticVirtualTextInfo",
-        },
-        Hint = {
-            text = { "-", "=" },
-            priority = 4,
-            color = nil,
-            cterm = nil,
-            highlight = "DiagnosticVirtualTextHint",
-        },
-        Misc = {
-            text = { "-", "=" },
-            priority = 5,
-            color = nil,
-            cterm = nil,
-            highlight = "Normal",
-        },
-    },
-    excluded_buftypes = {
-        "terminal",
-    },
-    excluded_filetypes = {
-        "prompt",
-        "TelescopePrompt",
-    },
-    autocmd = {
-        render = {
-            "BufWinEnter",
-            "TabEnter",
-            "TermEnter",
-            "WinEnter",
-            "CmdwinLeave",
-            "TextChanged",
-            "VimResized",
-            "WinScrolled",
-        },
-        clear = {
-            "BufWinLeave",
-            "TabLeave",
-            "TermLeave",
-            "WinLeave",
-        },
-    },
-    handlers = {
-        diagnostic = true,
-        search = true, -- Requires hlslens to be loaded, will run require("scrollbar.handlers.search").setup() for you
-    },
-})
+require("hlslens").setup()
+-- require("scrollbar").setup({
+--     show = true,
+--     show_in_active_only = false,
+--     set_highlights = true,
+--     folds = 500, -- handle folds, set to number to disable folds if no. of lines in buffer exceeds this
+--     max_lines = false, -- disables if no. of lines in buffer exceeds this
+--     handle = {
+--         text = " ",
+--         color = nil,
+--         cterm = nil,
+--         highlight = "CursorColumn",
+--         hide_if_all_visible = true, -- Hides handle if all lines are visible
+--     },
+--     marks = {
+--         Search = {
+--             text = { "-", "=" },
+--             priority = 0,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "Search",
+--         },
+--         Error = {
+--             text = { "-", "=" },
+--             priority = 1,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "DiagnosticVirtualTextError",
+--         },
+--         Warn = {
+--             text = { "-", "=" },
+--             priority = 2,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "DiagnosticVirtualTextWarn",
+--         },
+--         Info = {
+--             text = { "-", "=" },
+--             priority = 3,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "DiagnosticVirtualTextInfo",
+--         },
+--         Hint = {
+--             text = { "-", "=" },
+--             priority = 4,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "DiagnosticVirtualTextHint",
+--         },
+--         Misc = {
+--             text = { "-", "=" },
+--             priority = 5,
+--             color = nil,
+--             cterm = nil,
+--             highlight = "Normal",
+--         },
+--     },
+--     excluded_buftypes = {
+--         "terminal",
+--     },
+--     excluded_filetypes = {
+--         "prompt",
+--         "TelescopePrompt",
+--     },
+--     autocmd = {
+--         render = {
+--             "BufWinEnter",
+--             "TabEnter",
+--             "TermEnter",
+--             "WinEnter",
+--             "CmdwinLeave",
+--             "TextChanged",
+--             "VimResized",
+--             "WinScrolled",
+--         },
+--         clear = {
+--             "BufWinLeave",
+--             "TabLeave",
+--             "TermLeave",
+--             "WinLeave",
+--         },
+--     },
+--     handlers = {
+--         diagnostic = true,
+--         search = true, -- Requires hlslens to be loaded, will run require("scrollbar.handlers.search").setup() for you
+--     },
+-- })
 EOF
 
 lua << EOF
@@ -1962,7 +1977,7 @@ function! s:show_json_path()
     if l:line_len > 1000
         return
     endif
-    let l:current_line=line('.')-1
+    let l:current_line=like('.')-1
     let l:json_path=luaeval('require"jsonpath".get()')
     let l:bufnr=bufnr('%')
     if exists('*nvim_buf_set_extmark')
