@@ -17,12 +17,13 @@
 	sticky_history = yes
 	history_length = 20
 	dmenu = /usr/bin/dmenu -p dunst:
-	browser = /usr/bin/chromium
+	browser = /usr/bin/firefox-bin
 	class = Dunst
 	title = Dunst
 	always_run_script = true
 	width = 300
 	height = 100
+    origin = top-right
 
 [urgency_low]
 	startup_notification = false

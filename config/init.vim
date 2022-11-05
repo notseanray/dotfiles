@@ -1990,3 +1990,4 @@ augroup json_path
     au!
     autocmd BufEnter,BufWritePost,CursorMoved *.json :call s:show_json_path()
 augroup END
+
