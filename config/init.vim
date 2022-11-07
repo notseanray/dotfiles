@@ -41,7 +41,7 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'ntpeters/vim-better-whitespace'
 Plug 'kevinhwang91/nvim-hlslens'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'xiyaowong/nvim-transparent'
+" Plug 'xiyaowong/nvim-transparent'
 Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
@@ -64,8 +64,8 @@ Plug 'jedrzejboczar/possession.nvim'
 Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
 
 " Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
-" Plug 'projekt0n/github-nvim-theme'
-Plug 'morhetz/gruvbox'
+Plug 'projekt0n/github-nvim-theme'
+" Plug 'morhetz/gruvbox'
 Plug 'p00f/nvim-ts-rainbow'
 call plug#end()
 
@@ -104,12 +104,13 @@ augroup Binary
   au BufWritePost *.bin set nomod | endif
 augroup END
 
-let g:gruvbox_italic=1
+" let g:gruvbox_italic=1
 " let g:gruvbox_contrast_light="hard"
-let g:gruvbox_contrast_dark="medium"
-autocmd vimenter * ++nested colorscheme gruvbox
-set background=dark " Setting light mode
+" let g:gruvbox_contrast_dark="medium"
+" autocmd vimenter * ++nested colorscheme gruvbox
+" set background=dark " Setting light mode
 " colorscheme github_light_default
+colorscheme github_dark_default
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
@@ -855,9 +856,9 @@ set completeopt=menuone,noinsert,noselect
 autocmd BufWritePost init.vim :CatppuccinCompile
 
 lua << EOF
-require("transparent").setup({
-  enable = true, -- boolean: enable transparent
-})
+-- require("transparent").setup({
+--   enable = true, -- boolean: enable transparent
+-- })
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
 
