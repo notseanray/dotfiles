@@ -64,6 +64,7 @@ Plug 'jedrzejboczar/possession.nvim'
 Plug 'mrjones2014/legendary.nvim'
 Plug 'stevearc/dressing.nvim'
 Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
+Plug 'uga-rosa/cmp-dictionary'
 
 " Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 Plug 'projekt0n/github-nvim-theme'
@@ -93,6 +94,21 @@ function! SetTab(n)
 endfunction
 
 command! -nargs=1 SetTab call SetTab(<f-args>)
+
+function! s:switch_lang(lang) abort
+    execute 'set spelllang=' . a:lang
+    CmpDictionaryUpdate
+endfunction
+
+command -nargs=1 SwitchLang call s:switch_lang('<args>')
+
+function! s:download_lang(lang) abort
+    call system('aspell -d ' . a:lang . ' dump master | aspell -l ' . a:lang . ' expand > ~/' . a:lang . '.dict')
+    execute 'set spelllang=' . a:lang
+    CmpDictionaryUpdate
+endfunction
+
+command -nargs=1 DownloadLang call s:download_lang('<args>')
 
 " Binary files -> xxd
 augroup Binary
@@ -378,7 +394,7 @@ require('leap-spooky').setup {
 }
 EOF
 
-" setlocal spelloptions+=noplainbuffer
+setlocal spelloptions+=noplainbuffer
 
 filetype plugin on
 
@@ -1916,8 +1932,34 @@ cmp.setup(coq.lsp_ensure_capabilities({
     { name = 'vsnip' },
     { name = 'path' },
     { name = 'buffer' },
+    { name = "dictionary", keyword_length = 2, },
   },
 }))
+require("cmp_dictionary").setup({
+	dic = {
+		["*"] = { "/usr/share/dict/words" },
+		["lua"] = "path/to/lua.dic",
+		["javascript,typescript"] = { "path/to/js.dic", "path/to/js2.dic" },
+		filename = {
+			["xmake.lua"] = { "path/to/xmake.dic", "path/to/lua.dic" },
+		},
+		filepath = {
+			["%.tmux.*%.conf"] = "path/to/tmux.dic"
+		},
+		spelllang = {
+			en = "~/en.dict",
+		},
+	},
+	-- The following are default values.
+	exact = 2,
+	first_case_insensitive = false,
+	document = false,
+	document_command = "wn %s -over",
+	async = false,
+	max_items = 10,
+	capacity = 5,
+	debug = false,
+})
 EOF
 
 " Find files using Telescope command-line sugar.
@@ -2212,4 +2254,3 @@ augroup json_path
     au!
     autocmd BufEnter,BufWritePost,CursorMoved *.json :call s:show_json_path()
 augroup END
-
