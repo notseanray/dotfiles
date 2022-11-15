@@ -958,7 +958,8 @@ EOF
 " For 'Yggdroot/indentLine' and 'lukas-reineke/indent-blankline.nvim' "
 let g:indentLine_fileTypeExclude = ['dashboard']
 " For 'ntpeters/vim-better-whitespace' "
-let g:better_whitespace_filetypes_blacklist = ['dashboard']
+let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'NvimTree', 'md', 'markdown', 'git', 'diff', 'gitcommit']
+let g:current_line_whitespace_disabled_soft=1
 
 
 lua << EOF
@@ -1005,7 +1006,7 @@ require('gitsigns').setup {
   },
   current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
   sign_priority = 6,
-  update_debounce = 500,
+  update_debounce = 1000,
   status_formatter = nil, -- Use default
   max_file_length = 40000, -- Disable if file is longer than this (in lines)
   preview_config = {
@@ -1074,7 +1075,7 @@ set completeopt=menuone,noinsert,noselect
 
 
 " Compile Catppuccin
-autocmd BufWritePost init.vim :CatppuccinCompile
+" autocmd BufWritePost init.vim :CatppuccinCompile
 
 lua << EOF
 require("transparent").setup({
@@ -1434,7 +1435,7 @@ local opts = {
         autoSetHints = true,
         --hover_with_actions = true,
         inlay_hints = {
-            show_parameter_hints = false,
+            show_parameter_hints = true,
             parameter_hints_prefix = "",
             other_hints_prefix = "",
         },
@@ -1940,7 +1941,7 @@ let g:presence_auto_update         = 1
 let g:presence_neovim_image_text   = "nvim > vscode"
 let g:presence_main_image          = "neovim"
 let g:presence_client_id           = "793271441293967371"
-let g:presence_debounce_timeout    = 500
+let g:presence_debounce_timeout    = 5000
 let g:presence_enable_line_number  = 1
 let g:presence_blacklist           = []
 let g:presence_buttons             = 1
