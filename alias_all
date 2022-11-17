@@ -57,6 +57,7 @@ alias dmenu="cd $HOME/.config/sean/dmenu/"
 alias t="reattach.py"
 alias tn="tmux"
 alias tx="tmux a -t"
+alias vimconf="v ~/.config/nvim/init.vim"
 export WINEPREFIX="/home/sean/.fusion360/wineprefixes/"
 export TERM='screen-256color'
 export EDITOR="nvim"
