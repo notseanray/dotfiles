@@ -1,5 +1,4 @@
 set nocompatible
-
 "automated installation of vimplug if not installed
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
@@ -46,8 +45,11 @@ Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
 Plug 'tpope/vim-repeat'
+
 Plug 'ggandor/leap.nvim'
 Plug 'ggandor/leap-spooky.nvim'
+Plug 'ggandor/flit.nvim'
+
 Plug 'notseanray/presence.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -58,19 +60,19 @@ Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
 Plug 'folke/which-key.nvim'
 Plug 'brenoprata10/nvim-highlight-colors'
-Plug 'phelipetls/jsonpath.nvim'
+" Plug 'phelipetls/jsonpath.nvim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'jedrzejboczar/possession.nvim'
 Plug 'mrjones2014/legendary.nvim'
 Plug 'stevearc/dressing.nvim'
 Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
 Plug 'sindrets/diffview.nvim'
-Plug 'Olical/conjure'
 
 " Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
-Plug 'projekt0n/github-nvim-theme'
-" Plug 'morhetz/gruvbox'
+" Plug 'projekt0n/github-nvim-theme'
+Plug 'morhetz/gruvbox'
 Plug 'p00f/nvim-ts-rainbow'
+Plug 'cbochs/grapple.nvim'
 call plug#end()
 
 set mouse=a
@@ -95,7 +97,6 @@ function! SetTab(n)
 endfunction
 
 command! -nargs=1 SetTab call SetTab(<f-args>)
-
 " Binary files -> xxd
 augroup Binary
   au!
@@ -108,13 +109,26 @@ augroup Binary
   au BufWritePost *.bin set nomod | endif
 augroup END
 
+" preserve cursor location on leave
+autocmd BufLeave,BufWinLeave * silent! mkview
+
+" restore cursor location on start
+autocmd BufReadPost * silent! loadview
+
+autocmd vimenter * ++nested colorscheme gruvbox
+
 " let g:gruvbox_italic=1
-" let g:gruvbox_contrast_light="hard"
+set background=light" Setting light mode
+let g:gruvbox_contrast_light="hard"
 " let g:gruvbox_contrast_dark="medium"
 " autocmd vimenter * ++nested colorscheme gruvbox
-" set background=dark " Setting light mode
 " colorscheme github_light_default
-colorscheme github_dark_default
+" colorscheme github_dark_default
+
+let g:gruvbox_contrast_dark = 'light'
+" let g:gruvbox_improved_strings = '1'
+" let g:gruvbox_improved_warnings = '1'
+
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
@@ -122,9 +136,17 @@ set termguicolors
 " nvim highlight colors
 set t_Co=256
 
-lua << EOF
-vim.g['conjure#extract#tree_sitter#enabled'] = true
+" if exists('+winbar')
+    " let s:json_path_ns=luaeval("vim.api.nvim_create_namespace('json_path')")
+    "
+    " augroup json_path
+    "     if &filetype ==# 'json'
+    "         setlocal winbar=%{luaeval('require\"jsonpath\".get()')}
+    "     endif
+    " augroup END
+" endif
 
+lua << EOF
 require('dressing').setup({
   input = {
     -- Set to false to disable the vim.ui.input implementation
@@ -353,6 +375,16 @@ require("nvim-highlight-colors").setup {
 require('leap').add_default_mappings()
 vim.keymap.del({'x', 'o'}, 'x')
 vim.keymap.del({'x', 'o'}, 'X')
+
+require('flit').setup {
+  keys = { f = 'f', F = 'F', t = 't', T = 'T' },
+  -- A string like "nv", "nvo", "o", etc.
+  labeled_modes = "v",
+  multiline = true,
+  -- Like `leap`s similar argument (call-specific overrides).
+  -- E.g.: opts = { equivalence_classes = {} }
+  opts = {}
+}
 EOF
 
 lua << EOF
@@ -905,7 +937,7 @@ local MASON_DEFAULT = {
     --   - true: All servers set up via lspconfig are automatically installed.
     --   - { exclude: string[] }: All servers set up via lspconfig, except the ones provided in the list, are automatically installed.
     --       Example: automatic_installation = { exclude = { "rust_analyzer", "solargraph" } }
-    automatic_installation = false,
+    automatic_installation = true,
 }
 require("mason-lspconfig").setup(MASON_DEFAULT)
 EOF
@@ -965,6 +997,7 @@ let g:indentLine_fileTypeExclude = ['dashboard']
 let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'NvimTree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive']
 let g:strip_whitespace_confirm=0
 let g:current_line_whitespace_disabled_hard=1
+let g:current_line_whitespace_disabled_soft=1
 
 
 lua << EOF
@@ -1084,7 +1117,7 @@ set completeopt=menuone,noinsert,noselect
 
 lua << EOF
 require("transparent").setup({
-  enable = true, -- boolean: enable transparent
+  enable = false, -- boolean: enable transparent
 })
 vim.opt.list = true
 vim.opt.listchars:append "space:⋅"
@@ -1435,6 +1468,10 @@ require('telescope').load_extension('possession')
 
 local nvim_lsp = require'lspconfig'
 
+local kopts = { noremap=true, silent=true }
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, kopts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, kopts)
+
 local opts = {
     tools = { -- rust-tools options
         autoSetHints = true,
@@ -1484,7 +1521,7 @@ local opts = {
 
         -- whether the hover action window gets automatically focused
         -- default: false
-        auto_focus = false,
+        auto_focus = true,
     },
 }
 
@@ -1648,7 +1685,7 @@ local theme = {
   tail = 'TabLine',
 }
 local tabby_config = function()
-  local palette = palettes.gruvbox_dark
+  local palette = palettes.gruvbox_light
   local filename = require('tabby.filename')
   local cwd = function()
     return ' ' .. vim.fn.fnamemodify(vim.fn.getcwd(), ':t') .. ' '
@@ -1936,6 +1973,12 @@ nnoremap <silent> <leader>fb <cmd>Telescope buffers<CR>
 nnoremap <silent> <leader>fh <cmd>Telescope help_tags<CR>
 nnoremap <silent> <leader>fs <cmd>Telescope possession list<CR>
 
+nnoremap <silent> <leader>tt <cmd>lua require("grapple").toggle()<CR>
+nnoremap <silent> <leader>tr <cmd>lua require("grapple").untag()<CR>
+nnoremap <silent> <leader>tn <cmd>lua require("grapple").cycle_forward()<CR>
+nnoremap <silent> <leader>tb <cmd>lua require("grapple").cycle_backward()<CR>
+nnoremap <silent> <leader>tl <cmd>lua require("grapple").popup_tags()<CR>
+
 " search buffers with fzf
 nnoremap <silent> <C-b>Telescope buffers<CR>
 nnoremap <silent> <C-f>Telescope live_grep<CR>
@@ -2058,14 +2101,6 @@ set cmdheight=1
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
-
-" let g:gruvbox_contrast_dark = 'light'
-" let g:gruvbox_improved_strings = '1'
-" let g:gruvbox_improved_warnings = '1'
-
-" set gruvbox color scheme
-" autocmd vimenter * ++nested colorscheme gruvbox
-" colorscheme github_dark
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
@@ -2191,31 +2226,9 @@ endfunction
 
 autocmd VimEnter * call OnVimEnter()
 
-if has ('autocmd') && execute("file") != ".config/nvim/init.vim" " Remain compatible with earlier versions
+if has('autocmd') && execute("file") != '.config/nvim/init.vim' " Remain compatible with earlier versions
  augroup vimrc
     autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
     autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
   augroup END
 endif " has autocmd
-
-let s:json_path_ns=luaeval("vim.api.nvim_create_namespace('json_path')")
-
-function! s:show_json_path()
-    let l:line_len=col('$')
-    if l:line_len > 1000
-        return
-    endif
-    let l:current_line=like('.')-1
-    let l:json_path=luaeval('require"jsonpath".get()')
-    let l:bufnr=bufnr('%')
-    if exists('*nvim_buf_set_extmark')
-        call nvim_buf_clear_namespace(l:bufnr, s:json_path_ns, 0, -1)
-        call nvim_buf_set_extmark(l:bufnr, s:json_path_ns, l:current_line, 0, {"hl_group": "Comment", "hl_mode": "replace", "virt_text": [[l:json_path, 'json_path']], "virt_text_pos": "eol"})
-    endif
-endfunction
-
-" augroup json_path
-"     au!
-"     autocmd BufEnter,BufWritePost,CursorMoved *.json :call s:show_json_path()
-" augroup END
-
