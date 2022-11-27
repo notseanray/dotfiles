@@ -1,5 +1,4 @@
 set nocompatible
-
 "automated installation of vimplug if not installed
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
     silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
@@ -31,8 +30,8 @@ Plug 'ms-jpq/coq.artifacts', {'branch': 'artifacts'}
 Plug 'kylechui/nvim-surround'
 Plug 'machakann/vim-sandwich'
 Plug 'lewis6991/gitsigns.nvim'
-Plug 'kyazdani42/nvim-tree.lua', { 'on': 'NvimTreeToggle' }
-Plug 'ryanoasis/vim-devicons', { 'on': 'NvimTreeToggle' }
+Plug 'nvim-neo-tree/neo-tree.nvim'
+Plug 'ryanoasis/vim-devicons', { 'on': 'Neotree' }
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'wakatime/vim-wakatime'
 Plug 'nvim-lua/plenary.nvim'
@@ -46,8 +45,12 @@ Plug 'chrisbra/csv.vim'
 Plug 'numToStr/Comment.nvim'
 Plug 'rcarriga/nvim-notify'
 Plug 'tpope/vim-repeat'
+Plug 'MunifTanjim/nui.nvim'
+
 Plug 'ggandor/leap.nvim'
 Plug 'ggandor/leap-spooky.nvim'
+Plug 'ggandor/flit.nvim'
+
 Plug 'notseanray/presence.nvim'
 Plug 'windwp/nvim-autopairs'
 Plug 'lukas-reineke/indent-blankline.nvim'
@@ -58,19 +61,19 @@ Plug 'kevinhwang91/rnvimr'
 Plug 'uga-rosa/ccc.nvim', {'branch': '0.7.2'}
 Plug 'folke/which-key.nvim'
 Plug 'brenoprata10/nvim-highlight-colors'
-Plug 'phelipetls/jsonpath.nvim'
+" Plug 'phelipetls/jsonpath.nvim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 Plug 'jedrzejboczar/possession.nvim'
 Plug 'mrjones2014/legendary.nvim'
 Plug 'stevearc/dressing.nvim'
 Plug 'krivahtoo/silicon.nvim', { 'do': './install.sh' }
 Plug 'sindrets/diffview.nvim'
-Plug 'Olical/conjure'
 
 " Plug 'catppuccin/nvim', {'as': 'catppuccin', 'do': 'CatppuccinCompile'}
 Plug 'projekt0n/github-nvim-theme'
 " Plug 'morhetz/gruvbox'
 Plug 'p00f/nvim-ts-rainbow'
+Plug 'cbochs/grapple.nvim'
 call plug#end()
 
 set mouse=a
@@ -95,7 +98,6 @@ function! SetTab(n)
 endfunction
 
 command! -nargs=1 SetTab call SetTab(<f-args>)
-
 " Binary files -> xxd
 augroup Binary
   au!
@@ -108,13 +110,26 @@ augroup Binary
   au BufWritePost *.bin set nomod | endif
 augroup END
 
+" preserve cursor location on leave
+autocmd BufLeave,BufWinLeave * silent! mkview
+
+" restore cursor location on start
+autocmd BufReadPost * silent! loadview
+
+" autocmd vimenter * ++nested colorscheme gruvbox
+
 " let g:gruvbox_italic=1
+set background=light" Setting dark mode
 " let g:gruvbox_contrast_light="hard"
 " let g:gruvbox_contrast_dark="medium"
 " autocmd vimenter * ++nested colorscheme gruvbox
-" set background=dark " Setting light mode
 " colorscheme github_light_default
 colorscheme github_dark_default
+
+" let g:gruvbox_contrast_dark = 'light'
+" let g:gruvbox_improved_strings = '1'
+" let g:gruvbox_improved_warnings = '1'
+
 
 " this variable must be enabled for colors to be applied properly
 set termguicolors
@@ -122,9 +137,20 @@ set termguicolors
 " nvim highlight colors
 set t_Co=256
 
-lua << EOF
-vim.g['conjure#extract#tree_sitter#enabled'] = true
+" if exists('+winbar')
+    " let s:json_path_ns=luaeval("vim.api.nvim_create_namespace('json_path')")
+    "
+    " augroup json_path
+    "     if &filetype ==# 'json'
+    "         setlocal winbar=%{luaeval('require\"jsonpath\".get()')}
+    "     endif
+    " augroup END
+" endif
+if &filetype ==# "neo-tree"
+    nnoremap <silent> o <ENTER>
+endif
 
+lua << EOF
 require('dressing').setup({
   input = {
     -- Set to false to disable the vim.ui.input implementation
@@ -353,6 +379,16 @@ require("nvim-highlight-colors").setup {
 require('leap').add_default_mappings()
 vim.keymap.del({'x', 'o'}, 'x')
 vim.keymap.del({'x', 'o'}, 'X')
+
+require('flit').setup {
+  keys = { f = 'f', F = 'F', t = 't', T = 'T' },
+  -- A string like "nv", "nvo", "o", etc.
+  labeled_modes = "v",
+  multiline = true,
+  -- Like `leap`s similar argument (call-specific overrides).
+  -- E.g.: opts = { equivalence_classes = {} }
+  opts = {}
+}
 EOF
 
 lua << EOF
@@ -905,7 +941,7 @@ local MASON_DEFAULT = {
     --   - true: All servers set up via lspconfig are automatically installed.
     --   - { exclude: string[] }: All servers set up via lspconfig, except the ones provided in the list, are automatically installed.
     --       Example: automatic_installation = { exclude = { "rust_analyzer", "solargraph" } }
-    automatic_installation = false,
+    automatic_installation = true,
 }
 require("mason-lspconfig").setup(MASON_DEFAULT)
 EOF
@@ -962,9 +998,10 @@ EOF
 " For 'Yggdroot/indentLine' and 'lukas-reineke/indent-blankline.nvim' "
 let g:indentLine_fileTypeExclude = ['dashboard']
 " For 'ntpeters/vim-better-whitespace' "
-let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'NvimTree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive']
+let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'neo-tree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive']
 let g:strip_whitespace_confirm=0
 let g:current_line_whitespace_disabled_hard=1
+let g:current_line_whitespace_disabled_soft=1
 
 
 lua << EOF
@@ -1435,6 +1472,10 @@ require('telescope').load_extension('possession')
 
 local nvim_lsp = require'lspconfig'
 
+local kopts = { noremap=true, silent=true }
+vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, kopts)
+vim.keymap.set('n', ']d', vim.diagnostic.goto_next, kopts)
+
 local opts = {
     tools = { -- rust-tools options
         autoSetHints = true,
@@ -1484,7 +1525,7 @@ local opts = {
 
         -- whether the hover action window gets automatically focused
         -- default: false
-        auto_focus = false,
+        auto_focus = true,
     },
 }
 
@@ -1712,185 +1753,210 @@ local tabby_config = function()
 end
 tabby_config()
 
-
--- local get_hex = require('cokeline/utils').get_hex
--- require('cokeline').setup({
---   components = {
---     {
---       text = function(buffer) return (buffer.index ~= 1) and '▏' or '' end,
---       fg = get_hex('Normal', 'fg')
---     },
---     {
---       text = function(buffer) return '    ' .. buffer.devicon.icon end,
---       fg = function(buffer) return buffer.devicon.color end,
---     },
---     {
---       text = function(buffer) return buffer.filename .. '    ' end,
---       style = function(buffer) return buffer.is_focused and 'bold' or nil end,
---     },
---     {
---       text = '',
---       delete_buffer_on_left_click = true,
---     },
---     {
---       text = '  ',
---     },
---   },
--- })
-
-
--- setup with all defaults
--- each of these are documented in `:help nvim-tree.OPTION_NAME`
--- nested options are documented by accessing them with `.` (eg: `:help nvim-tree.view.mappings.list`).
-require'nvim-tree'.setup {
-  auto_reload_on_write = true,
-  create_in_closed_folder = false,
-  disable_netrw = false,
-  hijack_cursor = false,
-  hijack_netrw = true,
-  hijack_unnamed_buffer_when_opening = false,
-  ignore_buffer_on_setup = false,
-  open_on_setup = false,
-  open_on_setup_file = false,
-  open_on_tab = false,
-  sort_by = "name",
-  update_cwd = true,
-  reload_on_bufenter = true,
-  respect_buf_cwd = false,
-  view = {
-    adaptive_size = false,
-    width = 30,
-    height = 30,
-    hide_root_folder = true,
-    side = "left",
-    preserve_window_proportions = false,
-    number = false,
-    relativenumber = true,
-    signcolumn = "no",
-  },
-  renderer = {
-    add_trailing = false,
-    group_empty = false,
-    highlight_git = false,
-    highlight_opened_files = "none",
-    root_folder_modifier = ":~",
-    indent_markers = {
-      enable = true,
-      icons = {
-        corner = "└ ",
-        edge = "│ ",
-        none = "  ",
+EOF
+lua << EOF
+vim.cmd([[ let g:neo_tree_remove_legacy_commands = 1 ]])
+require("neo-tree").setup({
+    close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
+    popup_border_style = "rounded",
+    enable_git_status = true,
+    enable_diagnostics = true,
+    sort_case_insensitive = false, -- used when sorting files and directories in the tree
+    sort_function = nil , -- use a custom function for sorting files and directories in the tree
+    -- sort_function = function (a,b)
+    --       if a.type == b.type then
+    --           return a.path > b.path
+    --       else
+    --           return a.type > b.type
+    --       end
+    --   end , -- this sorts files and directories descendantly
+    default_component_configs = {
+      container = {
+        enable_character_fade = true
+      },
+      indent = {
+        indent_size = 2,
+        padding = 1, -- extra padding on left hand side
+        -- indent guides
+        with_markers = true,
+        indent_marker = "│",
+        last_indent_marker = "└",
+        highlight = "NeoTreeIndentMarker",
+        -- expander config, needed for nesting files
+        with_expanders = nil, -- if nil and file nesting is enabled, will enable expanders
+        expander_collapsed = "",
+        expander_expanded = "",
+        expander_highlight = "NeoTreeExpander",
+      },
+      icon = {
+        folder_closed = "",
+        folder_open = "",
+        folder_empty = "ﰊ",
+        -- The next two settings are only a fallback, if you use nvim-web-devicons and configure default icons there
+        -- then these will never be used.
+        default = "*",
+        highlight = "NeoTreeFileIcon"
+      },
+      modified = {
+        symbol = "+",
+        highlight = "NeoTreeModified",
+      },
+      name = {
+        trailing_slash = false,
+        use_git_status_colors = true,
+        highlight = "NeoTreeFileName",
+      },
+      git_status = {
+        symbols = {
+          -- Change type
+          added     = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
+          modified  = "", -- or "", but this is redundant info if you use git_status_colors on the name
+          deleted   = "✖",-- this can only be used in the git_status source
+          renamed   = "",-- this can only be used in the git_status source
+          -- Status type
+          untracked = "",
+          ignored   = "",
+          unstaged  = "",
+          staged    = "",
+          conflict  = "",
+        }
       },
     },
-    icons = {
-      webdev_colors = true,
-      git_placement = "before",
-      padding = " ",
-      symlink_arrow = " ➛ ",
-      show = {
-        file = true,
-        folder = true,
-        folder_arrow = true,
-        git = true,
+    window = {
+      position = "left",
+      width = 33,
+      mapping_options = {
+        noremap = true,
+        nowait = true,
       },
-      glyphs = {
-        default = " ",
-        symlink = " ",
-        folder = {
-          arrow_closed = "",
-          arrow_open = "",
-          default = " ",
-          open = " ",
-          empty = " ",
-          empty_open = " ",
-          symlink = " ",
-          symlink_open = " ",
+      mappings = {
+        ["<space>"] = {
+            "toggle_node",
+            nowait = false, -- disable `nowait` if you have existing combos starting with this char that you want to use
         },
-        git = {
-          unstaged = "✗",
-          staged = "✓",
-          unmerged = "",
-          renamed = "➜",
-          untracked = "★",
-          deleted = " ",
-          ignored = "◌",
+        ["<2-LeftMouse>"] = "open",
+        ["<cr>"] = "open",
+        ["<esc>"] = "revert_preview",
+        ["P"] = { "toggle_preview", config = { use_float = true } },
+        ["S"] = "open_split",
+        ["s"] = "open_vsplit",
+        -- ["S"] = "split_with_window_picker",
+        -- ["s"] = "vsplit_with_window_picker",
+        ["t"] = "open_tabnew",
+        -- ["<cr>"] = "open_drop",
+        -- ["t"] = "open_tab_drop",
+        ["w"] = "open_with_window_picker",
+        --["P"] = "toggle_preview", -- enter preview mode, which shows the current node without focusing
+        ["C"] = "close_node",
+        ["z"] = "close_all_nodes",
+        --["Z"] = "expand_all_nodes",
+        ["a"] = {
+          "add",
+          -- some commands may take optional config options, see `:h neo-tree-mappings` for details
+          config = {
+            show_path = "none" -- "none", "relative", "absolute"
+          }
         },
-      },
+        ["A"] = "add_directory", -- also accepts the optional config.show_path option like "add".
+        ["d"] = "delete",
+        ["r"] = "rename",
+        ["y"] = "copy_to_clipboard",
+        ["x"] = "cut_to_clipboard",
+        ["p"] = "paste_from_clipboard",
+        ["c"] = "copy", -- takes text input for destination, also accepts the optional config.show_path option like "add":
+        -- ["c"] = {
+        --  "copy",
+        --  config = {
+        --    show_path = "none" -- "none", "relative", "absolute"
+        --  }
+        --}
+        ["m"] = "move", -- takes text input for destination, also accepts the optional config.show_path option like "add".
+        ["q"] = "close_window",
+        ["R"] = "refresh",
+        ["?"] = "show_help",
+        ["<"] = "prev_source",
+        [">"] = "next_source",
+      }
     },
-    special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
-  },
-  hijack_directories = {
-    enable = true,
-    auto_open = true,
-  },
-  update_focused_file = {
-    enable = true,
-    update_cwd = true,
-    ignore_list = {"node_modules", "target"},
-  },
-  ignore_ft_on_setup = {},
-  system_open = {
-    cmd = "",
-    args = {},
-  },
-  diagnostics = {
-    enable = true,
-    show_on_dirs = false,
-    icons = {
-      hint = " ",
-      info = " ",
-      warning = " ",
-      error = " ",
-    },
-  },
-  filters = {
-    dotfiles = false,
-    custom = {},
-    exclude = {},
-  },
-  git = {
-    enable = true,
-    ignore = true,
-    timeout = 500,
-  },
-  actions = {
-    use_system_clipboard = true,
-    change_dir = {
-      enable = true,
-      global = false,
-      restrict_above_cwd = false,
-    },
-    expand_all = {
-      max_folder_discovery = 100,
-    },
-    open_file = {
-      quit_on_open = false,
-      resize_window = true,
-      window_picker = {
-        enable = true,
-        chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
-        exclude = {
-          filetype = { "notify", "packer", "qf", "diff", "fugitive", "fugitiveblame" },
-          buftype = { "nofile", "terminal", "help" },
+    nesting_rules = {},
+    filesystem = {
+      filtered_items = {
+        visible = false, -- when true, they will just be displayed differently than normal items
+        hide_dotfiles = true,
+        hide_gitignored = true,
+        hide_hidden = true, -- only works on Windows for hidden files/directories
+        hide_by_name = {
+          --"node_modules"
+        },
+        hide_by_pattern = { -- uses glob style patterns
+          --"*.meta",
+          --"*/src/*/tsconfig.json",
+        },
+        always_show = { -- remains visible even if other settings would normally hide it
+          --".gitignored",
+        },
+        never_show = { -- remains hidden even if visible is toggled to true, this overrides always_show
+          --".DS_Store",
+          --"thumbs.db"
+        },
+        never_show_by_pattern = { -- uses glob style patterns
+          --".null-ls_*",
         },
       },
+      follow_current_file = true, -- This will find and focus the file in the active buffer every
+                                   -- time the current file is changed while the tree is open.
+      group_empty_dirs = false, -- when true, empty folders will be grouped together
+      hijack_netrw_behavior = "open_default", -- netrw disabled, opening a directory opens neo-tree
+                                              -- in whatever position is specified in window.position
+                            -- "open_current",  -- netrw disabled, opening a directory opens within the
+                                              -- window like netrw would, regardless of window.position
+                            -- "disabled",    -- netrw left alone, neo-tree does not handle opening dirs
+      use_libuv_file_watcher = false, -- This will use the OS level file watchers to detect changes
+                                      -- instead of relying on nvim autocmd events.
+      window = {
+        mappings = {
+          ["<bs>"] = "navigate_up",
+          ["."] = "set_root",
+          ["H"] = "toggle_hidden",
+          ["/"] = "fuzzy_finder",
+          ["D"] = "fuzzy_finder_directory",
+          ["f"] = "filter_on_submit",
+          ["<c-x>"] = "clear_filter",
+          ["[g"] = "prev_git_modified",
+          ["]g"] = "next_git_modified",
+        }
+      }
     },
-    remove_file = {
-      close_window = true,
+    buffers = {
+      follow_current_file = true, -- This will find and focus the file in the active buffer every
+                                   -- time the current file is changed while the tree is open.
+      group_empty_dirs = true, -- when true, empty folders will be grouped together
+      show_unloaded = true,
+      window = {
+        mappings = {
+          ["bd"] = "buffer_delete",
+          ["<bs>"] = "navigate_up",
+          ["."] = "set_root",
+        }
+      },
     },
-  },
-  trash = {
-    cmd = "trash",
-    require_confirm = true,
-  },
-  live_filter = {
-    prefix = "[FILTER]: ",
-    always_show_folders = true,
-  },
-}
+    git_status = {
+      window = {
+        position = "float",
+        mappings = {
+          ["A"]  = "git_add_all",
+          ["gu"] = "git_unstage_file",
+          ["ga"] = "git_add_file",
+          ["gr"] = "git_revert_file",
+          ["gc"] = "git_commit",
+          ["gp"] = "git_push",
+          ["gg"] = "git_commit_and_push",
+        }
+      }
+  }})
 EOF
 
-lua <<EOF
+lua << EOF
 local coq = require'coq'
 local cmp = require'cmp'
 cmp.setup(coq.lsp_ensure_capabilities({
@@ -1935,6 +2001,12 @@ nnoremap <silent> <leader>fw <cmd>Telescope live_grep<CR>
 nnoremap <silent> <leader>fb <cmd>Telescope buffers<CR>
 nnoremap <silent> <leader>fh <cmd>Telescope help_tags<CR>
 nnoremap <silent> <leader>fs <cmd>Telescope possession list<CR>
+
+nnoremap <silent> <leader>tt <cmd>lua require("grapple").toggle()<CR>
+nnoremap <silent> <leader>tr <cmd>lua require("grapple").untag()<CR>
+nnoremap <silent> <leader>tn <cmd>lua require("grapple").cycle_forward()<CR>
+nnoremap <silent> <leader>tb <cmd>lua require("grapple").cycle_backward()<CR>
+nnoremap <silent> <leader>tl <cmd>lua require("grapple").popup_tags()<CR>
 
 " search buffers with fzf
 nnoremap <silent> <C-b>Telescope buffers<CR>
@@ -2012,12 +2084,10 @@ function InitialOpen()
     if eval("@%") == ""
         :DashboardNewFile
     endif
-    :NvimTreeToggle
+    :Neotree toggle
 endfunction
 
 nnoremap <silent> <C-n> :call InitialOpen()<CR>
-nnoremap <silent> <leader>r :NvimTreeRefresh<CR>
-nnoremap <silent> <leader>n :NvimTreeFindFile<CR>
 " More available functions:
 " NvimTreeOpen
 " NvimTreeClose
@@ -2058,14 +2128,6 @@ set cmdheight=1
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
-
-" let g:gruvbox_contrast_dark = 'light'
-" let g:gruvbox_improved_strings = '1'
-" let g:gruvbox_improved_warnings = '1'
-
-" set gruvbox color scheme
-" autocmd vimenter * ++nested colorscheme gruvbox
-" colorscheme github_dark
 
 " Always show the signcolumn, otherwise it would shift the text each time
 " diagnostics appear/become resolved.
@@ -2191,31 +2253,9 @@ endfunction
 
 autocmd VimEnter * call OnVimEnter()
 
-if has ('autocmd') && execute("file") != ".config/nvim/init.vim" " Remain compatible with earlier versions
+if has('autocmd') && execute("file") != '.config/nvim/init.vim' " Remain compatible with earlier versions
  augroup vimrc
     autocmd! BufWritePost $MYVIMRC source % | echom "Reloaded " . $MYVIMRC | redraw
     autocmd! BufWritePost $MYGVIMRC if has('gui_running') | so % | echom "Reloaded " . $MYGVIMRC | endif | redraw
   augroup END
 endif " has autocmd
-
-let s:json_path_ns=luaeval("vim.api.nvim_create_namespace('json_path')")
-
-function! s:show_json_path()
-    let l:line_len=col('$')
-    if l:line_len > 1000
-        return
-    endif
-    let l:current_line=like('.')-1
-    let l:json_path=luaeval('require"jsonpath".get()')
-    let l:bufnr=bufnr('%')
-    if exists('*nvim_buf_set_extmark')
-        call nvim_buf_clear_namespace(l:bufnr, s:json_path_ns, 0, -1)
-        call nvim_buf_set_extmark(l:bufnr, s:json_path_ns, l:current_line, 0, {"hl_group": "Comment", "hl_mode": "replace", "virt_text": [[l:json_path, 'json_path']], "virt_text_pos": "eol"})
-    endif
-endfunction
-
-" augroup json_path
-"     au!
-"     autocmd BufEnter,BufWritePost,CursorMoved *.json :call s:show_json_path()
-" augroup END
-
