@@ -31,6 +31,7 @@ alias cups-start="doas rc-service cupsd start"
 alias cups-stop="doas rc-service cupsd stop"
 alias st="tabbed -r 2 st -w '' -e zsh"
 alias stv="tabbed -r 2 st -w '' -e nvim"
+alias mr="xrandr --output DP-0 --mode 1920x1080 --rate 119.98 --primary  --rotate normal"
 alias ..="cd .."
 alias ...="cd ../.."
 alias firefox=firefox-bin

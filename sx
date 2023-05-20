@@ -63,7 +63,7 @@ killall pulseaudio
 pulseaudio --daemonize=no --exit-idle-time=-1 > /dev/null 2>&1 &
 # ntp replacement ofc
 TimeServe 132.145.193.229:45000
-# picom -b 2>&1 &
+picom -b 2>&1 &
 dunst > /dev/null 2>&1 &
 /home/sean/.config/scripts/sbar.sh > /dev/null 2>&1 &
 setwall $(cat /home/sean/.config/scripts/curwall)
