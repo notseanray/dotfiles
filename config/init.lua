@@ -1,4 +1,4 @@
-
+vim.opt.ttimeoutlen=2
 vim.opt.mouse="a"
 vim.opt.cmdheight=1
 vim.opt.shortmess:append({ c = true })
@@ -1652,20 +1652,22 @@ map("n", "<C-s>", "/")
 map("v", "<C-s>", "gc")
 map("n", "<C-p>", ":lua require(\"notify\").dismiss()<ENTER>", { silent = true })
 map("n", "<C-W>", ":WinShift<ENTER>")
+map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
+map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
 --map("n", "K", ":call <SID>show_documentation()", { silent = true })
 
 -- map("n", "<C-f", ":Neoformat<ENTER>")
 
 -- vim.g.ayucolor="dark"
-local colorscheme = "github_dark"
+local colorscheme = "github_dark_colorblind"
 local _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 
-vim.g.clipboard=unnamed
+vim.g.clipboard=unnamedplus
 vim.g.rainbow_active = 1
 --vim.g.indentLine_fileTypeExclude = ['dashboard']
 --vim.g.better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'neo-tree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive']
 vim.cmd("let g:indentLine_fileTypeExclude = ['dashboard']")
-vim.cmd("let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'neo-tree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive', 'zsh', 'bash']")
+vim.cmd("let g:better_whitespace_filetypes_blacklist = ['dashboard', 'terminal', 'neo-tree', 'md', 'diff', 'git', 'gitcommit', 'unite', 'qf', 'help', 'markdown', 'fugitive', 'zsh', 'bash', '', ]")
 vim.g.strip_whitespace_confirm=0
 vim.g.current_line_whitespace_disabled_hard=1
 vim.g.current_line_whitespace_disabled_soft=1
