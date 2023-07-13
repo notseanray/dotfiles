@@ -68,12 +68,6 @@ require("lazy").setup({
         "junegunn/fzf",
         build = "fzf#install()",
     },
-    {
-        "lukas-reineke/virt-column.nvim",
-        config = function()
-            require("virt-column").setup()
-        end
-    },
     "glepnir/galaxyline.nvim",
     "ntpeters/vim-better-whitespace",
     "notseanray/nerd-galaxyline",
@@ -328,9 +322,100 @@ require("lazy").setup({
             })
       end
   },
-  { "projekt0n/github-nvim-theme", lazy = false },
-  -- { "ayu-theme/ayu-vim", lazy = false },
-  { "folke/neoconf.nvim", cmd = "Neoconf" },
+  {
+    "mhartington/formatter.nvim",
+    config = function()
+      -- Utilities for creating configurations
+      local util = require "formatter.util"
+
+      -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+      require("formatter").setup {
+        -- Enable or disable logging
+        logging = true,
+        -- Set the log level
+        log_level = vim.log.levels.WARN,
+        -- All formatter configurations are opt-in
+        filetype = {
+          -- Formatter configurations for filetype "lua" go here
+          -- and will be executed in order
+          typescript = {
+            function()
+              -- Full specification of configurations is down below and in Vim help
+              -- files
+              return {
+                exe = 'prettier',
+                args = {
+                  '--config-precedence',
+                  'prefer-file',
+                  '--single-quote',
+                  '--no-bracket-spacing',
+                  '--prose-wrap',
+                  'always',
+                  '--arrow-parens',
+                  'always',
+                  '--trailing-comma',
+                  'all',
+                  '--no-semi',
+                  '--end-of-line',
+                  'lf',
+                  '--stdin-filepath',
+                  vim.fn.shellescape(vim.api.nvim_buf_get_name(0)),
+                },
+                stdin = true,
+              }
+            end
+          },
+          rust = {
+            function()
+              -- Full specification of configurations is down below and in Vim help
+              -- files
+              return {
+                exe = 'cargo',
+                args = {
+                  'fmt'
+                },
+              }
+            end
+          },
+          lua = {
+            -- "formatter.filetypes.lua" defines default configurations for the
+            -- "lua" filetype
+            require("formatter.filetypes.lua").stylua,
+
+            -- You can also define your own configuration
+            function()
+              -- Supports conditional formatting
+              if util.get_current_buffer_file_name() == "special.lua" then
+                return nil
+              end
+
+              -- Full specification of configurations is down below and in Vim help
+              -- files
+              return {
+                exe = "stylua",
+                args = {
+                  "--search-parent-directories",
+                  "--stdin-filepath",
+                  util.escape_path(util.get_current_buffer_file_path()),
+                  "--",
+                  "-",
+                },
+                stdin = true,
+              }
+            end
+          },
+
+          -- Use the special "*" filetype for defining formatter configurations on
+          -- any filetype
+          ["*"] = {
+            -- "formatter.filetypes.any" defines default configurations for any
+            -- filetype
+            require("formatter.filetypes.any").remove_trailing_whitespace
+          }
+        }
+      }
+    end
+  },
   {
 	  "lewis6991/gitsigns.nvim",
 	config = function()
@@ -378,7 +463,35 @@ require("lazy").setup({
 
 	end
   },
-  "sbdchd/neoformat",
+  {
+    "rebelot/kanagawa.nvim",
+    config = function()
+      require('kanagawa').setup({
+      compile = true,             -- enable compiling the colorscheme
+      undercurl = true,            -- enable undercurls
+      commentStyle = { italic = true },
+      functionStyle = {},
+      keywordStyle = { italic = true},
+      statementStyle = { bold = true },
+      typeStyle = {},
+      transparent = true,         -- do not set background color
+      dimInactive = false,         -- dim inactive window `:h hl-NormalNC`
+      terminalColors = true,       -- define vim.g.terminal_color_{0,17}
+      colors = {                   -- add/modify theme and palette colors
+          palette = {},
+          theme = { wave = {}, lotus = {}, dragon = {}, all = {} },
+      },
+      overrides = function(colors) -- add/modify highlights
+          return {}
+      end,
+      theme = "dragon",              -- Load "wave" theme when 'background' option is not set
+      background = {               -- map the value of 'background' option to a theme
+          dark = "dragon",           -- try "dragon" !
+          light = "lotus"
+      },
+  })
+    end
+  },
   {
     "ggandor/flit.nvim",
     config = function()
@@ -407,7 +520,7 @@ require("lazy").setup({
         -- termcolors = {} -- table of colour name strings
       },
   -- A list of parser names, or "all"
-  ensure_installed = { "rust", "lua", "c", "python" },
+  ensure_installed = { "rust", "lua", "c", "python", "lua", "javascript", "typescript", "toml" },
   ignore_install = { "regex" },
 
   -- Install parsers synchronously (only applied to `ensure_installed`)
@@ -516,7 +629,7 @@ require('rust-tools').setup(opts)
         local MASON_DEFAULT = {
     -- A list of servers to automatically install if they're not already installed. Example: { "rust_analyzer@nightly", "sumneko_lua" }
     -- This setting has no relation with the `automatic_installation` setting.
-    ensure_installed = { "rust_analyzer", "tsserver", "tailwindcss", "pylsp", "vuels", "svelte" },
+    ensure_installed = { "rust_analyzer", "tsserver", "tailwindcss", "pylsp", "vuels", "svelte", "lua_ls" },
 
     -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed.
     -- This setting has no relation with the `ensure_installed` setting.
@@ -554,6 +667,7 @@ require("mason-lspconfig").setup(MASON_DEFAULT)
 	end
 
 },
+"timakro/vim-yadi",
 "kyazdani42/nvim-web-devicons",
 {
     "nvim-telescope/telescope.nvim",
@@ -1165,7 +1279,6 @@ end
 },
 
   "wakatime/vim-wakatime",
-  "tpope/vim-repeat",
   {
 	  "windwp/nvim-autopairs",
 	  config = function()
@@ -1340,39 +1453,38 @@ end
           require'colorizer'.setup()
       end
   },
-  "folke/neodev.nvim",
-  {
-	  "gbprod/yanky.nvim",
-	  config = function()
-		  require("yanky").setup({
-			  ring = {
-			    history_length = 100,
-			    storage = "shada",
-			    sync_with_numbered_registers = true,
-			    cancel_event = "update",
-			  },
-			  picker = {
-			    select = {
-			      action = nil, -- nil to use default put action
-			    },
-			    telescope = {
-			      mappings = nil, -- nil to use default mappings
-			    },
-			  },
-			  system_clipboard = {
-			    sync_with_ring = true,
-			  },
-			  highlight = {
-			    on_put = true,
-			    on_yank = true,
-			    timer = 100,
-			  },
-			  preserve_cursor_position = {
-			    enabled = true,
-			  },
-			})
-	end,
-  },
+ --  {
+	--   "gbprod/yanky.nvim",
+	--   config = function()
+	-- 	  require("yanky").setup({
+	-- 		  ring = {
+	-- 		    history_length = 100,
+	-- 		    storage = "shada",
+	-- 		    sync_with_numbered_registers = true,
+	-- 		    cancel_event = "update",
+	-- 		  },
+	-- 		  picker = {
+	-- 		    select = {
+	-- 		      action = nil, -- nil to use default put action
+	-- 		    },
+	-- 		    telescope = {
+	-- 		      mappings = nil, -- nil to use default mappings
+	-- 		    },
+	-- 		  },
+	-- 		  system_clipboard = {
+	-- 		    sync_with_ring = true,
+	-- 		  },
+	-- 		  highlight = {
+	-- 		    on_put = true,
+	-- 		    on_yank = true,
+	-- 		    timer = 100,
+	-- 		  },
+	-- 		  preserve_cursor_position = {
+	-- 		    enabled = true,
+	-- 		  },
+	-- 		})
+	-- end,
+ --  },
   {
   "nvim-neo-tree/neo-tree.nvim",
     config = function()
@@ -1579,8 +1691,6 @@ end
 }
 })
 
--- prettier for formatting on save
-vim.g.neoformat_try_node_exe = 1
 
 local function map(mode, lhs, rhs, opts)
     local options = { noremap = true }
@@ -1622,7 +1732,7 @@ function! g:ChmodOnWrite()
 endfunction
 ]]
 
-map("v", "<C-c>", ":y+\" | y+%<ENTER>", { noremap = true, silent = true, nowait = true })
+map("v", "<C-c>", "\"+y", { noremap = true, silent = true, nowait = true })
 map("v", "<C-x>", ":d+\" | d+%<ENTER>", { noremap = true, silent = true })
 map("v", "<p>", ":\"+p", { silent = true })
 map("t", "<ESC>", "<C-\\><C-n>")
@@ -1648,19 +1758,16 @@ map("n", "g]", ":lua vim.diagnostic.goto_next()", { silent = true })
 map("n", "gss", ":SList<ENTER>", { silent = true })
 map("n", "gsl", ":SLoad", { silent = true })
 map("n", "gsn", ":SSave<ENTER>", { silent = true })
-map("n", "<C-s>", "/")
+map("n", "<C-s>", "/\\c")
 map("v", "<C-s>", "gc")
 map("n", "<C-p>", ":lua require(\"notify\").dismiss()<ENTER>", { silent = true })
 map("n", "<C-W>", ":WinShift<ENTER>")
 map("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", { noremap = true, silent = true })
 map("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", { noremap = true, silent = true })
---map("n", "K", ":call <SID>show_documentation()", { silent = true })
+-- map("n", "K", ":call show_documentation()<ENTER>", { silent = true })
 
--- map("n", "<C-f", ":Neoformat<ENTER>")
 
 -- vim.g.ayucolor="dark"
-local colorscheme = "github_dark_colorblind"
-local _ = pcall(vim.cmd, "colorscheme " .. colorscheme)
 
 vim.g.clipboard=unnamedplus
 vim.g.rainbow_active = 1
@@ -1672,18 +1779,18 @@ vim.g.strip_whitespace_confirm=0
 vim.g.current_line_whitespace_disabled_hard=1
 vim.g.current_line_whitespace_disabled_soft=1
 
-
+vim.cmd('autocmd BufRead * DetectIndent')
 local function set_tab(n)
 	vim.o.tabstop = n
 	vim.o.shiftwidth = n
 	vim.o.softtabstop = n
 	vim.opt.expandtab = true
-	vim.opt.autoindent = true
 	vim.opt.smartindent = true
-end
-set_tab(4)
+  end
 
 
+-- vim.cmd('source ~/.config/nvim/colors.vim')
+vim.cmd('colorscheme kanagawa')
 vim.cmd [[
 function! Trim()
     let l:save = winsaveview()
