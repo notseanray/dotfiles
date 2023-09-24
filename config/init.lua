@@ -413,9 +413,55 @@ require("lazy").setup({
 						require("formatter.filetypes.any").remove_trailing_whitespace,
 					},
 				},
+				typescriptreact = {
+					function()
+					  return {
+						exe = "prettier",
+						args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0) },
+						stdin = true
+					  }
+					end
+				  },
+				javascriptreact = {
+					function()
+					  return {
+						exe = "prettier",
+						args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0) },
+						stdin = true
+					  }
+					end
+				  },
+				  javascript = {
+					function()
+					  return {
+						exe = "prettier",
+						args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0) },
+						stdin = true
+					  }
+					end
+				  },
+				  typescript = {
+					function()
+					  return {
+						exe = "prettier",
+						args = {"--stdin-filepath", vim.api.nvim_buf_get_name(0) },
+						stdin = true
+					  }
+					end
+				  },
+				  rust = {
+					function()
+					  return {
+						exe = "rustfmt",
+						args = { "--emit=stdout" },
+						stdin = true
+					  }
+					end
+				  }
 			})
 		end,
 	},
+	"sindrets/diffview.nvim",
 	{
 		"lewis6991/gitsigns.nvim",
 		config = function()
@@ -1137,7 +1183,7 @@ require("lazy").setup({
 					},
 				},
 				window = {
-					position = "left",
+					position = "float",
 					width = 30,
 					mapping_options = {
 						noremap = true,
@@ -1385,7 +1431,7 @@ autocmd BufWritePost * call Trim()
 if vim.g.filetype == "neo-tree" then
 	map("n", "o", "<ENTER>", { silent = true })
 end
-map("n", "<C-n>", ":NeoTreeShowToggle<ENTER>", { silent = true })
+map("n", "<C-n>", ":Neotree<ENTER>", { silent = true })
 map("n", "<C-h>", ":call WinMove('h')<ENTER>", { silent = true })
 map("n", "<C-j>", ":call WinMove('j')<ENTER>", { silent = true })
 map("n", "<C-k>", ":call WinMove('k')<ENTER>", { silent = true })
